@@ -20,6 +20,13 @@ export interface AgonesFleet extends KubeObjectInterface {
   spec: {
     replicas: number;
     scheduling: string;
+    strategy?: {
+      type: string;
+      rollingUpdate?: {
+        maxSurge: string | number;
+        maxUnavailable: string | number;
+      };
+    };
     template: object;
   };
   status?: {
@@ -37,7 +44,7 @@ export class Fleet extends KubeObject<AgonesFleet> {
   static isNamespaced = true;
 
   static get detailsRoute() {
-    return '/agones/fleets/:namespace/:name';
+    return 'agones-fleet';
   }
 
   get spec() {
@@ -66,5 +73,21 @@ export class Fleet extends KubeObject<AgonesFleet> {
 
   get readyReplicas(): number {
     return this.status.readyReplicas || 0;
+  }
+
+  get reservedReplicas(): number {
+    return this.status.reservedReplicas || 0;
+  }
+
+  get strategy(): string {
+    return this.spec.strategy?.type || 'RollingUpdate';
+  }
+
+  get maxSurge(): string | number | undefined {
+    return this.spec.strategy?.rollingUpdate?.maxSurge;
+  }
+
+  get maxUnavailable(): string | number | undefined {
+    return this.spec.strategy?.rollingUpdate?.maxUnavailable;
   }
 }

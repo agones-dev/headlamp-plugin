@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-import { KubeObject, KubeObjectInterface } from '@kinvolk/headlamp-plugin/lib/k8s/cluster';
+import { GraphSource } from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
+import { useMemo } from 'react';
+import { Fleet } from '../../resources/fleet';
+import { makeNode } from './graphHelpers';
 
-export interface AgonesGameServerSet extends KubeObjectInterface {
-  spec: {
-    replicas: number;
-    scheduling: string;
-    template: object;
-  };
-  status?: {
-    replicas?: number;
-    readyReplicas?: number;
-    reservedReplicas?: number;
-    allocatedReplicas?: number;
-  };
-}
-
-export class GameServerSet extends KubeObject<AgonesGameServerSet> {
-  static apiVersion = 'agones.dev/v1';
-  static kind = 'GameServerSet';
-  static apiName = 'gameserversets';
-  static isNamespaced = true;
-}
+export const fleetsSource: GraphSource = {
+  id: 'agones-fleets',
+  label: 'Fleets',
+  useData() {
+    const [fleets] = Fleet.useList();
+    return useMemo(() => {
+      if (!fleets) return null;
+      return { nodes: fleets.map(f => makeNode(f, 100)) };
+    }, [fleets]);
+  },
+};
