@@ -15,96 +15,37 @@
  */
 
 import { registerMapSource, registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
-import { DetailsGrid, ResourceListView } from '@kinvolk/headlamp-plugin/lib/components/common';
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Fleet } from './resources/fleet';
 import { agonesMapSource } from './mapView';
+import { FleetAutoscalerDetail } from './views/fleetautoscalers/Detail';
+import { FleetAutoscalerList } from './views/fleetautoscalers/List';
+import { FleetDetail } from './views/fleets/Detail';
+import { FleetList } from './views/fleets/List';
+import { GameServerDetail } from './views/gameservers/Detail';
+import { GameServerList } from './views/gameservers/List';
+import { AgonesOverview } from './views/overview/Overview';
+
+// ─── Map ─────────────────────────────────────────────────────────────────────
 
 registerMapSource(agonesMapSource);
 
-// Top-level "Agones" sidebar entry
-registerSidebarEntry({
-  parent: null,
-  name: 'agones',
-  label: 'Agones',
-  url: '/agones/fleets',
-  icon: 'mdi:gamepad-square',
-});
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
 
-// "Fleets" subsection under "Agones"
-registerSidebarEntry({
-  parent: 'agones',
-  name: 'agones-fleets',
-  label: 'Fleets',
-  url: '/agones/fleets',
-});
+registerSidebarEntry({ parent: null, name: 'agones', label: 'Agones', url: '/agones', icon: 'mdi:gamepad-square' });
+registerSidebarEntry({ parent: 'agones', name: 'agones-overview', label: 'Overview', url: '/agones' });
+registerSidebarEntry({ parent: 'agones', name: 'agones-fleets', label: 'Fleets', url: '/agones/fleets' });
+registerSidebarEntry({ parent: 'agones', name: 'agones-gameservers', label: 'Game Servers', url: '/agones/gameservers' });
+registerSidebarEntry({ parent: 'agones', name: 'agones-fleetautoscalers', label: 'Autoscalers', url: '/agones/fleetautoscalers' });
 
-registerRoute({
-  path: '/agones/fleets/:namespace/:name',
-  sidebar: 'agones-fleets',
-  name: 'agones-fleet',
-  component: () => {
-    const { namespace, name } = useParams<{ namespace: string; name: string }>();
-    return (
-      <DetailsGrid
-        resourceType={Fleet}
-        name={name}
-        namespace={namespace}
-        withEvents
-        extraInfo={item =>
-          item && [
-            { name: 'Scheduling', value: item.scheduling },
-            { name: 'Desired Replicas', value: item.desiredReplicas },
-            { name: 'Current Replicas', value: item.currentReplicas },
-            { name: 'Ready Replicas', value: item.readyReplicas },
-            { name: 'Allocated Replicas', value: item.allocatedReplicas },
-          ]
-        }
-      />
-    );
-  },
-});
+// ─── Routes ──────────────────────────────────────────────────────────────────
 
-registerRoute({
-  path: '/agones/fleets',
-  sidebar: 'agones-fleets',
-  name: 'agones-fleets',
-  exact: true,
-  component: () => (
-    <ResourceListView
-      title="Fleets"
-      resourceClass={Fleet}
-      columns={[
-        'name',
-        'namespace',
-        {
-          id: 'scheduling',
-          label: 'Scheduling',
-          getValue: (item: Fleet) => item.scheduling,
-        },
-        {
-          id: 'desired',
-          label: 'Desired',
-          getValue: (item: Fleet) => item.desiredReplicas,
-        },
-        {
-          id: 'current',
-          label: 'Current',
-          getValue: (item: Fleet) => item.currentReplicas,
-        },
-        {
-          id: 'allocated',
-          label: 'Allocated',
-          getValue: (item: Fleet) => item.allocatedReplicas,
-        },
-        {
-          id: 'ready',
-          label: 'Ready',
-          getValue: (item: Fleet) => item.readyReplicas,
-        },
-        'age',
-      ]}
-    />
-  ),
-});
+registerRoute({ path: '/agones', sidebar: 'agones-overview', name: 'agones-overview', exact: true, component: () => <AgonesOverview /> });
+
+registerRoute({ path: '/agones/fleets', sidebar: 'agones-fleets', name: 'agones-fleets', exact: true, component: () => <FleetList /> });
+registerRoute({ path: '/agones/fleets/:namespace/:name', sidebar: 'agones-fleets', name: 'agones-fleet', component: () => <FleetDetail /> });
+
+registerRoute({ path: '/agones/gameservers', sidebar: 'agones-gameservers', name: 'agones-gameservers', exact: true, component: () => <GameServerList /> });
+registerRoute({ path: '/agones/gameservers/:namespace/:name', sidebar: 'agones-gameservers', name: 'agones-gameserver', component: () => <GameServerDetail /> });
+
+registerRoute({ path: '/agones/fleetautoscalers', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscalers', exact: true, component: () => <FleetAutoscalerList /> });
+registerRoute({ path: '/agones/fleetautoscalers/:namespace/:name', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscaler', component: () => <FleetAutoscalerDetail /> });
