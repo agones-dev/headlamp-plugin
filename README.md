@@ -55,6 +55,9 @@ This plugin follows the standard Headlamp plugin development workflow. See the [
 ## Contributing
 
 Contributions are welcome! Please open issues or pull requests.
+> ⚠️🤣⚠️🤣⚠️🤣  
+> NO BUT SERIOUSLY, WE WERE JUST PLAYING WHEN WE INITIALLY MAKING THIS. IT NEEDS SOLID IMPROVEMENT.  
+> ⚠️🤣⚠️🤣⚠️🤣
 
 ## License
 
