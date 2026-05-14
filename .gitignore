@@ -73,6 +73,7 @@ web_modules/
 
 # Output of 'npm pack'
 *.tgz
+*.tar.gz
 
 # Yarn Integrity file
 .yarn-integrity
@@ -133,4 +134,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-
