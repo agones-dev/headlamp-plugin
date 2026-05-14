@@ -34,6 +34,11 @@
   "overrides": {
     "typescript": "5.6.2"
   },
+  "headlamp": {
+    "extraDist": {
+      "package.json": "./package.json"
+    }
+  },
   "devDependencies": {
     "@kinvolk/headlamp-plugin": "^0.14.0",
     "vite": "^6.4.2",
