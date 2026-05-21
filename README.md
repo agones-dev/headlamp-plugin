@@ -54,10 +54,11 @@ This plugin follows the standard Headlamp plugin development workflow. See the [
 
 ## Contributing
 
-Contributions are welcome! Please open issues or pull requests.
-> ⚠️🤣⚠️🤣⚠️🤣  
-> NO BUT SERIOUSLY, WE WERE JUST PLAYING WHEN WE INITIALLY MAKING THIS. IT NEEDS SOLID IMPROVEMENT.  
-> ⚠️🤣⚠️🤣⚠️🤣
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, CI checks, and pull request guidelines.
+
+- [Bug report](.github/ISSUE_TEMPLATE/bug_report.md)
+- [Feature request](.github/ISSUE_TEMPLATE/feature_request.md)
+- [Security policy](.github/SECURITY.md)
 
 ## License
 
