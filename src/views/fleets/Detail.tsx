@@ -31,6 +31,7 @@ import { ReplicaBar } from '../../components/ReplicaBar';
 import { UtilBar } from '../../components/UtilBar';
 import { Fleet } from '../../resources/fleet';
 import { GameServer } from '../../resources/gameserver';
+import { GameServerSetsSection } from './GameServerSetsSection';
 
 interface WithGameServers { gameServers: GameServer[] | null }
 
@@ -143,6 +144,7 @@ export function FleetDetail() {
       }
       extraSections={item =>
         item && [
+          <GameServerSetsSection fleet={item} />,
           <AggregateCapacitySection gameServers={gameServers ?? null} />,
           <GameServersSection gameServers={gameServers ?? null} />,
           <AllocateSection fleet={item} />,

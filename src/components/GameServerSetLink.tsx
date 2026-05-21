@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-import { GraphSource } from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
-import { fleetsSource } from './views/map/fleetsSource';
-import { gameServerSetsSource } from './views/map/gameServerSetsSource';
-import { gameServersSource } from './views/map/gameServersSource';
-import { podsSource } from './views/map/podsSource';
+import { Router } from '@kinvolk/headlamp-plugin/lib';
+import React from 'react';
 
-export const agonesMapSource: GraphSource = {
-  id: 'agones',
-  label: 'Agones',
-  sources: [fleetsSource, gameServerSetsSource, gameServersSource, podsSource],
-};
+interface GameServerSetLinkProps {
+  namespace: string;
+  name: string;
+  onClick?: (e: React.MouseEvent) => void;
+}
+
+export function GameServerSetLink({ namespace, name, onClick }: GameServerSetLinkProps) {
+  const url = Router.createRouteURL('agones-gameserverset', { namespace, name });
+  return (
+    <a href={url} onClick={onClick}>
+      {name}
+    </a>
+  );
+}

@@ -16,8 +16,8 @@
 
 import { GraphEdge, GraphSource } from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
 import { useMemo } from 'react';
-import { Fleet } from '../../resources/fleet';
 import { GameServer } from '../../resources/gameserver';
+import { GameServerSet } from '../../resources/gameserverset';
 import { buildNameToUidMap, makeNode } from './graphHelpers';
 
 export const gameServersSource: GraphSource = {
@@ -25,21 +25,27 @@ export const gameServersSource: GraphSource = {
   label: 'GameServers',
   useData() {
     const [gameServers] = GameServer.useList();
-    const [fleets]      = Fleet.useList();
+    const [sets] = GameServerSet.useList();
     return useMemo(() => {
       if (!gameServers) return null;
 
-      const fleetUidMap = buildNameToUidMap(fleets ?? []);
+      const gssUidMap = buildNameToUidMap(sets ?? []);
       const edges: GraphEdge[] = [];
 
       for (const gs of gameServers) {
-        const fleetName = gs.fleet;
-        if (!fleetName) continue;
-        const uid = fleetUidMap.get(`${gs.metadata.namespace}/${fleetName}`);
-        if (uid) edges.push({ id: `fleet-gs-${uid}-${gs.metadata.uid}`, source: uid, target: gs.metadata.uid });
+        const gssName = gs.gameServerSet;
+        if (!gssName) continue;
+        const uid = gssUidMap.get(`${gs.metadata.namespace}/${gssName}`);
+        if (uid) {
+          edges.push({
+            id: `gss-gs-${uid}-${gs.metadata.uid}`,
+            source: uid,
+            target: gs.metadata.uid,
+          });
+        }
       }
 
       return { nodes: gameServers.map(gs => makeNode(gs, 60)), edges };
-    }, [gameServers, fleets]);
+    }, [gameServers, sets]);
   },
 };

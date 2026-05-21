@@ -1,0 +1,84 @@
+/*
+ * Copyright Contributors to Agones a Series of LF Projects, LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { KubeObject, KubeObjectInterface } from '@kinvolk/headlamp-plugin/lib/k8s/cluster';
+import { FLEET_NAME_LABEL } from '../utils/agonesLabels';
+
+export interface AgonesGameServerSet extends KubeObjectInterface {
+  spec: {
+    replicas: number;
+    scheduling: string;
+    template: object;
+  };
+  status?: {
+    replicas?: number;
+    readyReplicas?: number;
+    reservedReplicas?: number;
+    allocatedReplicas?: number;
+    shutdownReplicas?: number;
+  };
+}
+
+export class GameServerSet extends KubeObject<AgonesGameServerSet> {
+  static apiVersion = 'agones.dev/v1';
+  static kind = 'GameServerSet';
+  static apiName = 'gameserversets';
+  static isNamespaced = true;
+
+  static get detailsRoute() {
+    return 'agones-gameserverset';
+  }
+
+  get spec() {
+    return this.jsonData.spec;
+  }
+
+  get status() {
+    return this.jsonData.status || {};
+  }
+
+  get fleet(): string {
+    return this.metadata.labels?.[FLEET_NAME_LABEL] ?? '';
+  }
+
+  get scheduling(): string {
+    return this.spec.scheduling || 'Packed';
+  }
+
+  get desiredReplicas(): number {
+    return this.spec.replicas || 0;
+  }
+
+  get currentReplicas(): number {
+    return this.status.replicas || 0;
+  }
+
+  get readyReplicas(): number {
+    return this.status.readyReplicas || 0;
+  }
+
+  get allocatedReplicas(): number {
+    return this.status.allocatedReplicas || 0;
+  }
+
+  get reservedReplicas(): number {
+    return this.status.reservedReplicas || 0;
+  }
+
+  get shutdownReplicas(): number {
+    return this.status.shutdownReplicas || 0;
+  }
+}

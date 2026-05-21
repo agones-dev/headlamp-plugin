@@ -16,26 +16,19 @@
 
 import Chip from '@mui/material/Chip';
 import React from 'react';
+import { GameServerSetPhase } from '../utils/gameServerSetHelpers';
 
-type ChipColor = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
-
-const STATE_COLORS: Record<string, ChipColor> = {
-  // In-progress lifecycle states
-  PortAllocation: 'info',
-  Creating: 'info',
-  Starting: 'info',
-  Scheduled: 'info',
-  RequestReady: 'info',
-  // Stable states
-  Ready: 'success',
-  Allocated: 'warning',
-  Reserved: 'secondary',
-  // Terminal / problem states
-  Shutdown: 'default',
-  Error: 'error',
-  Unhealthy: 'error',
+const PHASE_STYLE: Record<
+  GameServerSetPhase,
+  { label: string; color: 'default' | 'success' | 'warning' }
+> = {
+  active: { label: 'Active', color: 'success' },
+  retiring: { label: 'Retiring', color: 'warning' },
+  unknown: { label: '—', color: 'default' },
 };
 
-export function StateChip({ state }: { state: string }) {
-  return <Chip label={state || '—'} color={STATE_COLORS[state] ?? 'default'} size="small" />;
+export function GameServerSetPhaseChip({ phase }: { phase: GameServerSetPhase }) {
+  const { label, color } = PHASE_STYLE[phase];
+  if (phase === 'unknown') return <>{label}</>;
+  return <Chip label={label} color={color} size="small" />;
 }

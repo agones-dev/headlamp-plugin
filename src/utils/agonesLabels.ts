@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphSource } from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
-import { fleetsSource } from './views/map/fleetsSource';
-import { gameServerSetsSource } from './views/map/gameServerSetsSource';
-import { gameServersSource } from './views/map/gameServersSource';
-import { podsSource } from './views/map/podsSource';
-
-export const agonesMapSource: GraphSource = {
-  id: 'agones',
-  label: 'Agones',
-  sources: [fleetsSource, gameServerSetsSource, gameServersSource, podsSource],
-};
+/** Agones label keys (pkg/apis/agones/v1). */
+export const FLEET_NAME_LABEL = 'agones.dev/fleet';
+export const GAME_SERVER_SET_LABEL = 'agones.dev/gameserverset';
+export const GAME_SERVER_POD_LABEL = 'agones.dev/gameserver';

@@ -15,6 +15,7 @@
  */
 
 import { KubeObject, KubeObjectInterface } from '@kinvolk/headlamp-plugin/lib/k8s/cluster';
+import { GAME_SERVER_SET_LABEL } from '../utils/agonesLabels';
 
 export interface GameServerSpecPort {
   name?: string;
@@ -99,6 +100,10 @@ export class GameServer extends KubeObject<AgonesGameServer> {
 
   get fleet(): string {
     return this.metadata.labels?.['agones.dev/fleet'] ?? '';
+  }
+
+  get gameServerSet(): string {
+    return this.metadata.labels?.[GAME_SERVER_SET_LABEL] ?? '';
   }
 
   get ports(): string {
