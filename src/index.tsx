@@ -16,6 +16,7 @@
 
 import { registerMapSource, registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
+import { AgonesInstallCheck } from './components/common/AgonesInstallCheck';
 import { agonesMapSource } from './mapView';
 import { FleetAutoscalerDetail } from './views/fleetautoscalers/Detail';
 import { FleetAutoscalerList } from './views/fleetautoscalers/List';
@@ -24,6 +25,14 @@ import { FleetList } from './views/fleets/List';
 import { GameServerDetail } from './views/gameservers/Detail';
 import { GameServerList } from './views/gameservers/List';
 import { AgonesOverview } from './views/overview/Overview';
+
+function withAgonesInstallCheck(Component: React.ComponentType) {
+  return () => (
+    <AgonesInstallCheck>
+      <Component />
+    </AgonesInstallCheck>
+  );
+}
 
 // ─── Map ─────────────────────────────────────────────────────────────────────
 
@@ -39,13 +48,13 @@ registerSidebarEntry({ parent: 'agones', name: 'agones-fleetautoscalers', label:
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
-registerRoute({ path: '/agones', sidebar: 'agones-overview', name: 'agones-overview', exact: true, component: () => <AgonesOverview /> });
+registerRoute({ path: '/agones', sidebar: 'agones-overview', name: 'agones-overview', exact: true, component: withAgonesInstallCheck(AgonesOverview) });
 
-registerRoute({ path: '/agones/fleets', sidebar: 'agones-fleets', name: 'agones-fleets', exact: true, component: () => <FleetList /> });
-registerRoute({ path: '/agones/fleets/:namespace/:name', sidebar: 'agones-fleets', name: 'agones-fleet', component: () => <FleetDetail /> });
+registerRoute({ path: '/agones/fleets', sidebar: 'agones-fleets', name: 'agones-fleets', exact: true, component: withAgonesInstallCheck(FleetList) });
+registerRoute({ path: '/agones/fleets/:namespace/:name', sidebar: 'agones-fleets', name: 'agones-fleet', component: withAgonesInstallCheck(FleetDetail) });
 
-registerRoute({ path: '/agones/gameservers', sidebar: 'agones-gameservers', name: 'agones-gameservers', exact: true, component: () => <GameServerList /> });
-registerRoute({ path: '/agones/gameservers/:namespace/:name', sidebar: 'agones-gameservers', name: 'agones-gameserver', component: () => <GameServerDetail /> });
+registerRoute({ path: '/agones/gameservers', sidebar: 'agones-gameservers', name: 'agones-gameservers', exact: true, component: withAgonesInstallCheck(GameServerList) });
+registerRoute({ path: '/agones/gameservers/:namespace/:name', sidebar: 'agones-gameservers', name: 'agones-gameserver', component: withAgonesInstallCheck(GameServerDetail) });
 
-registerRoute({ path: '/agones/fleetautoscalers', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscalers', exact: true, component: () => <FleetAutoscalerList /> });
-registerRoute({ path: '/agones/fleetautoscalers/:namespace/:name', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscaler', component: () => <FleetAutoscalerDetail /> });
+registerRoute({ path: '/agones/fleetautoscalers', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscalers', exact: true, component: withAgonesInstallCheck(FleetAutoscalerList) });
+registerRoute({ path: '/agones/fleetautoscalers/:namespace/:name', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscaler', component: withAgonesInstallCheck(FleetAutoscalerDetail) });

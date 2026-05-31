@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-import { Link } from '@kinvolk/headlamp-plugin/lib/components/common';
-import React from 'react';
+import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
 
-interface FleetLinkProps {
-  namespace: string;
-  name: string;
-  onClick?: (e: React.MouseEvent) => void;
-}
-
-export function FleetLink({ namespace, name, onClick }: FleetLinkProps) {
-  return (
-    <Link routeName="agones-fleet" params={{ namespace, name }} onClick={onClick}>
-      {name}
-    </Link>
-  );
+export async function isAgonesInstalled(): Promise<boolean> {
+  try {
+    const response = await ApiProxy.request('/apis/agones.dev/v1', {
+      method: 'GET',
+    });
+    return !!response;
+  } catch {
+    return false;
+  }
 }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
@@ -62,9 +61,13 @@ export function ReplicasControl({ fleet, min = 0, max = 1000 }: ReplicasControlP
       return;
     }
     setLoading(true);
-    setOpen(false);
+    setError('');
     try {
       await fleet.patch({ spec: { replicas: next } });
+      setOpen(false);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update replicas';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -74,14 +77,6 @@ export function ReplicasControl({ fleet, min = 0, max = 1000 }: ReplicasControlP
     if (e.key === 'Enter') handleConfirm();
     if (e.key === 'Escape') handleClose();
   };
-
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60 }}>
-        <CircularProgress size={16} />
-      </Box>
-    );
-  }
 
   return (
     <>
@@ -123,8 +118,10 @@ export function ReplicasControl({ fleet, min = 0, max = 1000 }: ReplicasControlP
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleConfirm} variant="contained">Apply</Button>
+          <Button onClick={handleClose} disabled={loading}>Cancel</Button>
+          <Button onClick={handleConfirm} variant="contained" disabled={loading}>
+            {loading ? <CircularProgress size={20} /> : 'Apply'}
+          </Button>
         </DialogActions>
       </Dialog>
     </>

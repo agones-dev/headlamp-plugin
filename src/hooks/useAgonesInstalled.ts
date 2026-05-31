@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import { Link } from '@kinvolk/headlamp-plugin/lib/components/common';
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { isAgonesInstalled as checkAgonesInstallation } from '../isAgonesInstalled';
 
-interface FleetLinkProps {
-  namespace: string;
-  name: string;
-  onClick?: (e: React.MouseEvent) => void;
-}
+export function useAgonesInstalled() {
+  const [isAgonesInstalled, setIsAgonesInstalled] = useState<boolean | null>(null);
 
-export function FleetLink({ namespace, name, onClick }: FleetLinkProps) {
-  return (
-    <Link routeName="agones-fleet" params={{ namespace, name }} onClick={onClick}>
-      {name}
-    </Link>
-  );
+  useEffect(() => {
+    async function checkInstalled() {
+      const installed = await checkAgonesInstallation();
+      setIsAgonesInstalled(!!installed);
+    }
+    checkInstalled();
+  }, []);
+
+  return {
+    isAgonesInstalled,
+    isAgonesCheckLoading: isAgonesInstalled === null,
+  };
 }
