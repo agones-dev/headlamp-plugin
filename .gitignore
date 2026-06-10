@@ -1,6 +1,7 @@
 
 .*
 !.gitignore
+!.github
 
 ### Node template
 # Logs
