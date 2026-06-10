@@ -46,24 +46,35 @@ export function FleetAutoscalerList() {
           {!autoscalers ? (
             <TableRow>
               <TableCell colSpan={7}>
-                <Typography variant="body2" color="text.secondary">Loading…</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Loading…
+                </Typography>
               </TableCell>
             </TableRow>
-          ) : autoscalers.map(a => (
-            <TableRow key={a.metadata.uid}>
-              <TableCell><Link kubeObject={a}>{a.metadata.name}</Link></TableCell>
-              <TableCell>{a.metadata.namespace}</TableCell>
-              <TableCell>{a.fleetName}</TableCell>
-              <TableCell>{a.policyType}</TableCell>
-              <TableCell>{a.currentReplicas} / {a.desiredReplicas}</TableCell>
-              <TableCell>
-                {a.lastScaleTime ? new Date(a.lastScaleTime).toLocaleString() : '—'}
-              </TableCell>
-              <TableCell>
-                <AutoscalerStatusChip ableToScale={a.ableToScale} scalingLimited={a.scalingLimited} />
-              </TableCell>
-            </TableRow>
-          ))}
+          ) : (
+            autoscalers.map(a => (
+              <TableRow key={a.metadata.uid}>
+                <TableCell>
+                  <Link kubeObject={a}>{a.metadata.name}</Link>
+                </TableCell>
+                <TableCell>{a.metadata.namespace}</TableCell>
+                <TableCell>{a.fleetName}</TableCell>
+                <TableCell>{a.policyType}</TableCell>
+                <TableCell>
+                  {a.currentReplicas} / {a.desiredReplicas}
+                </TableCell>
+                <TableCell>
+                  {a.lastScaleTime ? new Date(a.lastScaleTime).toLocaleString() : '—'}
+                </TableCell>
+                <TableCell>
+                  <AutoscalerStatusChip
+                    ableToScale={a.ableToScale}
+                    scalingLimited={a.scalingLimited}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </SectionBox>

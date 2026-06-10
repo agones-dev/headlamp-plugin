@@ -28,9 +28,11 @@ export function UtilBar({ value, max, showLabel = 'fraction' }: UtilBarProps) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   const color = pct >= 90 ? '#f44336' : pct >= 70 ? '#ff9800' : '#4caf50';
   const label =
-    showLabel === 'fraction' ? `${value} / ${max}` :
-    showLabel === 'percent'  ? `${Math.round(pct)}%` :
-    null;
+    showLabel === 'fraction'
+      ? `${value} / ${max}`
+      : showLabel === 'percent'
+      ? `${Math.round(pct)}%`
+      : null;
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -38,7 +40,11 @@ export function UtilBar({ value, max, showLabel = 'fraction' }: UtilBarProps) {
         <Box sx={{ width: `${pct}%`, height: '100%', bgcolor: color, borderRadius: 1 }} />
       </Box>
       {label && (
-        <Typography variant="caption" color="text.secondary" sx={{ minWidth: 52, textAlign: 'right' }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ minWidth: 52, textAlign: 'right' }}
+        >
           {label}
         </Typography>
       )}

@@ -77,7 +77,9 @@ export class FleetAutoscaler extends KubeObject<AgonesFleetAutoscaler> {
   static kind = 'FleetAutoscaler';
   static apiName = 'fleetautoscalers';
   static isNamespaced = true;
-  static get detailsRoute() { return 'agones-fleetautoscaler'; }
+  static get detailsRoute() {
+    return 'agones-fleetautoscaler';
+  }
 
   get spec() {
     return this.jsonData.spec;

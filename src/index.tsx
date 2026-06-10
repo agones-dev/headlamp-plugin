@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { registerMapSource, registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
+import {
+  registerMapSource,
+  registerRoute,
+  registerSidebarEntry,
+} from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
 import { agonesMapSource } from './mapView';
 import { FleetAutoscalerDetail } from './views/fleetautoscalers/Detail';
@@ -31,21 +35,86 @@ registerMapSource(agonesMapSource);
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 
-registerSidebarEntry({ parent: null, name: 'agones', label: 'Agones', url: '/agones', icon: 'mdi:gamepad-square' });
-registerSidebarEntry({ parent: 'agones', name: 'agones-overview', label: 'Overview', url: '/agones' });
-registerSidebarEntry({ parent: 'agones', name: 'agones-fleets', label: 'Fleets', url: '/agones/fleets' });
-registerSidebarEntry({ parent: 'agones', name: 'agones-gameservers', label: 'Game Servers', url: '/agones/gameservers' });
-registerSidebarEntry({ parent: 'agones', name: 'agones-fleetautoscalers', label: 'Autoscalers', url: '/agones/fleetautoscalers' });
+registerSidebarEntry({
+  parent: null,
+  name: 'agones',
+  label: 'Agones',
+  url: '/agones',
+  icon: 'mdi:gamepad-square',
+});
+registerSidebarEntry({
+  parent: 'agones',
+  name: 'agones-overview',
+  label: 'Overview',
+  url: '/agones',
+});
+registerSidebarEntry({
+  parent: 'agones',
+  name: 'agones-fleets',
+  label: 'Fleets',
+  url: '/agones/fleets',
+});
+registerSidebarEntry({
+  parent: 'agones',
+  name: 'agones-gameservers',
+  label: 'Game Servers',
+  url: '/agones/gameservers',
+});
+registerSidebarEntry({
+  parent: 'agones',
+  name: 'agones-fleetautoscalers',
+  label: 'Autoscalers',
+  url: '/agones/fleetautoscalers',
+});
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
-registerRoute({ path: '/agones', sidebar: 'agones-overview', name: 'agones-overview', exact: true, component: () => <AgonesOverview /> });
+registerRoute({
+  path: '/agones',
+  sidebar: 'agones-overview',
+  name: 'agones-overview',
+  exact: true,
+  component: () => <AgonesOverview />,
+});
 
-registerRoute({ path: '/agones/fleets', sidebar: 'agones-fleets', name: 'agones-fleets', exact: true, component: () => <FleetList /> });
-registerRoute({ path: '/agones/fleets/:namespace/:name', sidebar: 'agones-fleets', name: 'agones-fleet', component: () => <FleetDetail /> });
+registerRoute({
+  path: '/agones/fleets',
+  sidebar: 'agones-fleets',
+  name: 'agones-fleets',
+  exact: true,
+  component: () => <FleetList />,
+});
+registerRoute({
+  path: '/agones/fleets/:namespace/:name',
+  sidebar: 'agones-fleets',
+  name: 'agones-fleet',
+  component: () => <FleetDetail />,
+});
 
-registerRoute({ path: '/agones/gameservers', sidebar: 'agones-gameservers', name: 'agones-gameservers', exact: true, component: () => <GameServerList /> });
-registerRoute({ path: '/agones/gameservers/:namespace/:name', sidebar: 'agones-gameservers', name: 'agones-gameserver', component: () => <GameServerDetail /> });
+registerRoute({
+  path: '/agones/gameservers',
+  sidebar: 'agones-gameservers',
+  name: 'agones-gameservers',
+  exact: true,
+  component: () => <GameServerList />,
+});
+registerRoute({
+  path: '/agones/gameservers/:namespace/:name',
+  sidebar: 'agones-gameservers',
+  name: 'agones-gameserver',
+  component: () => <GameServerDetail />,
+});
 
-registerRoute({ path: '/agones/fleetautoscalers', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscalers', exact: true, component: () => <FleetAutoscalerList /> });
-registerRoute({ path: '/agones/fleetautoscalers/:namespace/:name', sidebar: 'agones-fleetautoscalers', name: 'agones-fleetautoscaler', component: () => <FleetAutoscalerDetail /> });
+registerRoute({
+  path: '/agones/fleetautoscalers',
+  sidebar: 'agones-fleetautoscalers',
+  name: 'agones-fleetautoscalers',
+  exact: true,
+  component: () => <FleetAutoscalerList />,
+});
+registerRoute({
+  path: '/agones/fleetautoscalers/:namespace/:name',
+  sidebar: 'agones-fleetautoscalers',
+  name: 'agones-fleetautoscaler',
+  component: () => <FleetAutoscalerDetail />,
+});

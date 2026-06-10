@@ -15,4 +15,8 @@
  */
 
 export const ROW_SX = { cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } } as const;
-export const SELECTED_SX = { ...ROW_SX, bgcolor: 'action.selected', '&:hover': { bgcolor: 'action.selected' } } as const;
+export const SELECTED_SX = {
+  ...ROW_SX,
+  bgcolor: 'action.selected',
+  '&:hover': { bgcolor: 'action.selected' },
+} as const;

@@ -32,13 +32,15 @@ import { UtilBar } from '../../components/UtilBar';
 import { Fleet } from '../../resources/fleet';
 import { GameServer } from '../../resources/gameserver';
 
-interface WithGameServers { gameServers: GameServer[] | null }
+interface WithGameServers {
+  gameServers: GameServer[] | null;
+}
 
 function AggregateCapacitySection({ gameServers }: WithGameServers) {
   if (!gameServers) return null;
 
   const counterTotals = new Map<string, { count: number; capacity: number }>();
-  const listTotals    = new Map<string, { count: number; capacity: number }>();
+  const listTotals = new Map<string, { count: number; capacity: number }>();
 
   for (const gs of gameServers) {
     for (const [key, c] of Object.entries(gs.counters)) {
@@ -47,7 +49,10 @@ function AggregateCapacitySection({ gameServers }: WithGameServers) {
     }
     for (const [key, l] of Object.entries(gs.lists)) {
       const prev = listTotals.get(key) ?? { count: 0, capacity: 0 };
-      listTotals.set(key, { count: prev.count + (l.values?.length ?? 0), capacity: prev.capacity + l.capacity });
+      listTotals.set(key, {
+        count: prev.count + (l.values?.length ?? 0),
+        capacity: prev.capacity + l.capacity,
+      });
     }
   }
 
@@ -67,18 +72,30 @@ function AggregateCapacitySection({ gameServers }: WithGameServers) {
         <TableBody>
           {Array.from(counterTotals.entries()).map(([key, t]) => (
             <TableRow key={`c-${key}`}>
-              <TableCell><Chip label="Counter" size="small" variant="outlined" /></TableCell>
-              <TableCell><strong>{key}</strong></TableCell>
+              <TableCell>
+                <Chip label="Counter" size="small" variant="outlined" />
+              </TableCell>
+              <TableCell>
+                <strong>{key}</strong>
+              </TableCell>
               <TableCell>{t.capacity - t.count}</TableCell>
-              <TableCell><UtilBar value={t.count} max={t.capacity} /></TableCell>
+              <TableCell>
+                <UtilBar value={t.count} max={t.capacity} />
+              </TableCell>
             </TableRow>
           ))}
           {Array.from(listTotals.entries()).map(([key, t]) => (
             <TableRow key={`l-${key}`}>
-              <TableCell><Chip label="List" size="small" variant="outlined" /></TableCell>
-              <TableCell><strong>{key}</strong></TableCell>
+              <TableCell>
+                <Chip label="List" size="small" variant="outlined" />
+              </TableCell>
+              <TableCell>
+                <strong>{key}</strong>
+              </TableCell>
               <TableCell>{t.capacity - t.count}</TableCell>
-              <TableCell><UtilBar value={t.count} max={t.capacity} /></TableCell>
+              <TableCell>
+                <UtilBar value={t.count} max={t.capacity} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -99,7 +116,9 @@ function AllocateSection({ fleet }: { fleet: Fleet }) {
   const [open, setOpen] = useState(false);
   return (
     <Box sx={{ pt: 1 }}>
-      <Button variant="outlined" onClick={() => setOpen(true)}>Allocate Game Server</Button>
+      <Button variant="outlined" onClick={() => setOpen(true)}>
+        Allocate Game Server
+      </Button>
       <AllocationDialog
         open={open}
         onClose={() => setOpen(false)}
@@ -126,19 +145,30 @@ export function FleetDetail() {
       extraInfo={item =>
         item && [
           { name: 'Scheduling', value: item.scheduling },
-          { name: 'Strategy',   value: item.strategy },
-          ...(item.strategy === 'RollingUpdate' ? [
-            { name: 'Max Surge',       value: item.maxSurge       ?? '25%' },
-            { name: 'Max Unavailable', value: item.maxUnavailable ?? '25%' },
-          ] : []),
+          { name: 'Strategy', value: item.strategy },
+          ...(item.strategy === 'RollingUpdate'
+            ? [
+                { name: 'Max Surge', value: item.maxSurge ?? '25%' },
+                { name: 'Max Unavailable', value: item.maxUnavailable ?? '25%' },
+              ]
+            : []),
           { name: 'Desired Replicas', value: item.desiredReplicas },
-          { name: 'Replica Status', value: (
-            <ReplicaBar desired={item.desiredReplicas} ready={item.readyReplicas}
-              allocated={item.allocatedReplicas} reserved={item.reservedReplicas} />
-          )},
-          { name: 'Ready Replicas',     value: item.readyReplicas },
+          {
+            name: 'Replica Status',
+            value: (
+              <ReplicaBar
+                desired={item.desiredReplicas}
+                ready={item.readyReplicas}
+                allocated={item.allocatedReplicas}
+                reserved={item.reservedReplicas}
+              />
+            ),
+          },
+          { name: 'Ready Replicas', value: item.readyReplicas },
           { name: 'Allocated Replicas', value: item.allocatedReplicas },
-          ...(item.reservedReplicas > 0 ? [{ name: 'Reserved Replicas', value: item.reservedReplicas }] : []),
+          ...(item.reservedReplicas > 0
+            ? [{ name: 'Reserved Replicas', value: item.reservedReplicas }]
+            : []),
         ]
       }
       extraSections={item =>
