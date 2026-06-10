@@ -33,7 +33,7 @@ export function FleetList() {
   const [selected, setSelected] = useState<Fleet | null>(null);
 
   const toggle = (fleet: Fleet) =>
-    setSelected(prev => prev?.metadata.uid === fleet.metadata.uid ? null : fleet);
+    setSelected(prev => (prev?.metadata.uid === fleet.metadata.uid ? null : fleet));
 
   return (
     <SectionBox title="Fleets">
@@ -51,31 +51,37 @@ export function FleetList() {
           {!fleets ? (
             <TableRow>
               <TableCell colSpan={5}>
-                <Typography variant="body2" color="text.secondary">Loading…</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Loading…
+                </Typography>
               </TableCell>
             </TableRow>
-          ) : fleets.map(fleet => (
-            <TableRow
-              key={fleet.metadata.uid}
-              sx={selected?.metadata.uid === fleet.metadata.uid ? SELECTED_SX : ROW_SX}
-              onClick={() => toggle(fleet)}
-            >
-              <TableCell><Link kubeObject={fleet}>{fleet.metadata.name}</Link></TableCell>
-              <TableCell>{fleet.metadata.namespace}</TableCell>
-              <TableCell>{fleet.scheduling}</TableCell>
-              <TableCell onClick={e => e.stopPropagation()}>
-                <ReplicasControl fleet={fleet} />
-              </TableCell>
-              <TableCell>
-                <ReplicaBar
-                  desired={fleet.desiredReplicas}
-                  ready={fleet.readyReplicas}
-                  allocated={fleet.allocatedReplicas}
-                  reserved={fleet.reservedReplicas}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
+          ) : (
+            fleets.map(fleet => (
+              <TableRow
+                key={fleet.metadata.uid}
+                sx={selected?.metadata.uid === fleet.metadata.uid ? SELECTED_SX : ROW_SX}
+                onClick={() => toggle(fleet)}
+              >
+                <TableCell>
+                  <Link kubeObject={fleet}>{fleet.metadata.name}</Link>
+                </TableCell>
+                <TableCell>{fleet.metadata.namespace}</TableCell>
+                <TableCell>{fleet.scheduling}</TableCell>
+                <TableCell onClick={e => e.stopPropagation()}>
+                  <ReplicasControl fleet={fleet} />
+                </TableCell>
+                <TableCell>
+                  <ReplicaBar
+                    desired={fleet.desiredReplicas}
+                    ready={fleet.readyReplicas}
+                    allocated={fleet.allocatedReplicas}
+                    reserved={fleet.reservedReplicas}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
       {selected && <GameServersPreview fleet={selected} />}

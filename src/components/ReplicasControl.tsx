@@ -109,12 +109,14 @@ export function ReplicasControl({ fleet, min = 0, max = 1000 }: ReplicasControlP
         <DialogTitle>Set replicas for {fleet.metadata.name}</DialogTitle>
         <DialogContent>
           <TextField
-
             fullWidth
             type="number"
             label="Desired replicas"
             value={inputValue}
-            onChange={e => { setInputValue(e.target.value); setError(''); }}
+            onChange={e => {
+              setInputValue(e.target.value);
+              setError('');
+            }}
             onKeyDown={handleKeyDown}
             inputProps={{ min, max }}
             error={!!error}
@@ -124,7 +126,9 @@ export function ReplicasControl({ fleet, min = 0, max = 1000 }: ReplicasControlP
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleConfirm} variant="contained">Apply</Button>
+          <Button onClick={handleConfirm} variant="contained">
+            Apply
+          </Button>
         </DialogActions>
       </Dialog>
     </>

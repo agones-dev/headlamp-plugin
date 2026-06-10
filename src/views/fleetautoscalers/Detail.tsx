@@ -63,7 +63,9 @@ function policyExtraInfo(item: FleetAutoscaler) {
           value:
             policy.webhook?.url ??
             (policy.webhook?.service
-              ? `${policy.webhook.service.namespace}/${policy.webhook.service.name}${policy.webhook.service.path ?? ''}`
+              ? `${policy.webhook.service.namespace}/${policy.webhook.service.name}${
+                  policy.webhook.service.path ?? ''
+                }`
               : '—'),
         },
       ];
@@ -106,7 +108,8 @@ function policyExplanation(item: FleetAutoscaler): string {
   const min = item.minReplicas;
   const max = item.maxReplicas;
   const bounds = (minVal?: number, maxVal?: number) => {
-    if (minVal !== null && minVal !== undefined && maxVal !== null && maxVal !== undefined) return `, keeping replicas between ${minVal} and ${maxVal}`;
+    if (minVal !== null && minVal !== undefined && maxVal !== null && maxVal !== undefined)
+      return `, keeping replicas between ${minVal} and ${maxVal}`;
     if (minVal !== null && minVal !== undefined) return `, never below ${minVal} replicas`;
     if (maxVal !== null && maxVal !== undefined) return `, never above ${maxVal} replicas`;
     return '';
@@ -117,16 +120,34 @@ function policyExplanation(item: FleetAutoscaler): string {
       const buf = item.bufferSize;
       const isPercent = typeof buf === 'string' && buf.endsWith('%');
       return isPercent
-        ? `Keeps ${buf} of total replicas in Ready state as a buffer. If Ready drops below that percentage, new servers are started${bounds(min, max)}.`
-        : `Keeps ${buf} server(s) in Ready state at all times. If fewer than ${buf} are ready, new servers are started${bounds(min, max)}.`;
+        ? `Keeps ${buf} of total replicas in Ready state as a buffer. If Ready drops below that percentage, new servers are started${bounds(
+            min,
+            max
+          )}.`
+        : `Keeps ${buf} server(s) in Ready state at all times. If fewer than ${buf} are ready, new servers are started${bounds(
+            min,
+            max
+          )}.`;
     }
     case 'Counter': {
       const c = policy.counter;
-      return `Watches the "${c?.key}" counter across all game servers. Scales the fleet so there are always ${c?.bufferSize} available counter slots in reserve. Capacity stays between ${c?.minCapacity ?? '?'} and ${c?.maxCapacity ?? '?'}.`;
+      return `Watches the "${
+        c?.key
+      }" counter across all game servers. Scales the fleet so there are always ${
+        c?.bufferSize
+      } available counter slots in reserve. Capacity stays between ${c?.minCapacity ?? '?'} and ${
+        c?.maxCapacity ?? '?'
+      }.`;
     }
     case 'List': {
       const l = policy.list;
-      return `Watches the "${l?.key}" list across all game servers. Scales the fleet so there are always ${l?.bufferSize} empty list slots available. Capacity stays between ${l?.minCapacity ?? '?'} and ${l?.maxCapacity ?? '?'}.`;
+      return `Watches the "${
+        l?.key
+      }" list across all game servers. Scales the fleet so there are always ${
+        l?.bufferSize
+      } empty list slots available. Capacity stays between ${l?.minCapacity ?? '?'} and ${
+        l?.maxCapacity ?? '?'
+      }.`;
     }
     case 'Webhook':
       return `Scaling decisions are delegated to an external webhook. The webhook receives current fleet state and responds with the desired replica count.`;
@@ -159,7 +180,12 @@ function ExplainerSection({ item, fleet }: { item: FleetAutoscaler; fleet: Fleet
     <SectionBox title="How This Autoscaler Works">
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-          <Chip label={item.policyType} color="primary" size="small" sx={{ mt: 0.25, flexShrink: 0 }} />
+          <Chip
+            label={item.policyType}
+            color="primary"
+            size="small"
+            sx={{ mt: 0.25, flexShrink: 0 }}
+          />
           <Typography variant="body2">{explanation}</Typography>
         </Box>
 
@@ -186,7 +212,9 @@ function ExplainerSection({ item, fleet }: { item: FleetAutoscaler; fleet: Fleet
                   </Box>
                 ) : (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body2">{current} → {desired}</Typography>
+                    <Typography variant="body2">
+                      {current} → {desired}
+                    </Typography>
                     <Chip label="scaling" color="warning" size="small" />
                   </Box>
                 )}
@@ -239,9 +267,11 @@ export function FleetAutoscalerDetail() {
         item && [
           {
             name: 'Fleet',
-            value: item.fleetName
-              ? <FleetLink namespace={item.metadata.namespace} name={item.fleetName} />
-              : '—',
+            value: item.fleetName ? (
+              <FleetLink namespace={item.metadata.namespace} name={item.fleetName} />
+            ) : (
+              '—'
+            ),
           },
           { name: 'Policy Type', value: item.policyType },
           ...policyExtraInfo(item),
@@ -262,9 +292,7 @@ export function FleetAutoscalerDetail() {
           },
           {
             name: 'Last Scale Time',
-            value: item.lastScaleTime
-              ? new Date(item.lastScaleTime).toLocaleString()
-              : '—',
+            value: item.lastScaleTime ? new Date(item.lastScaleTime).toLocaleString() : '—',
           },
           ...(item.lastAppliedPolicy
             ? [{ name: 'Last Applied Policy', value: item.lastAppliedPolicy }]
@@ -273,7 +301,11 @@ export function FleetAutoscalerDetail() {
       }
       extraSections={item => {
         if (!item) return [];
-        const fleet = fleets?.find(f => f.metadata.name === item.fleetName && f.metadata.namespace === item.metadata.namespace) ?? null;
+        const fleet =
+          fleets?.find(
+            f =>
+              f.metadata.name === item.fleetName && f.metadata.namespace === item.metadata.namespace
+          ) ?? null;
         return [<ExplainerSection item={item} fleet={fleet} />];
       }}
     />

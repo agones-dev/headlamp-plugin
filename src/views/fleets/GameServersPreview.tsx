@@ -36,8 +36,22 @@ export function GameServersPreview({ fleet }: { fleet: Fleet }) {
     </Typography>
   );
 
-  if (!gameServers)        return <PreviewPanel title={title}><Typography variant="body2" color="text.secondary">Loading…</Typography></PreviewPanel>;
-  if (!gameServers.length) return <PreviewPanel title={title}><Typography variant="body2" color="text.secondary">No game servers found.</Typography></PreviewPanel>;
+  if (!gameServers)
+    return (
+      <PreviewPanel title={title}>
+        <Typography variant="body2" color="text.secondary">
+          Loading…
+        </Typography>
+      </PreviewPanel>
+    );
+  if (!gameServers.length)
+    return (
+      <PreviewPanel title={title}>
+        <Typography variant="body2" color="text.secondary">
+          No game servers found.
+        </Typography>
+      </PreviewPanel>
+    );
 
   return (
     <PreviewPanel title={title}>

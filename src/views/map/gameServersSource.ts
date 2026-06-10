@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { GraphEdge, GraphSource } from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
+import {
+  GraphEdge,
+  GraphSource,
+} from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
 import { useMemo } from 'react';
 import { Fleet } from '../../resources/fleet';
 import { GameServer } from '../../resources/gameserver';
@@ -25,7 +28,7 @@ export const gameServersSource: GraphSource = {
   label: 'GameServers',
   useData() {
     const [gameServers] = GameServer.useList();
-    const [fleets]      = Fleet.useList();
+    const [fleets] = Fleet.useList();
     return useMemo(() => {
       if (!gameServers) return null;
 
@@ -36,7 +39,12 @@ export const gameServersSource: GraphSource = {
         const fleetName = gs.fleet;
         if (!fleetName) continue;
         const uid = fleetUidMap.get(`${gs.metadata.namespace}/${fleetName}`);
-        if (uid) edges.push({ id: `fleet-gs-${uid}-${gs.metadata.uid}`, source: uid, target: gs.metadata.uid });
+        if (uid)
+          edges.push({
+            id: `fleet-gs-${uid}-${gs.metadata.uid}`,
+            source: uid,
+            target: gs.metadata.uid,
+          });
       }
 
       return { nodes: gameServers.map(gs => makeNode(gs, 60)), edges };

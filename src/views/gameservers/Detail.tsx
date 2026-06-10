@@ -82,29 +82,45 @@ function CountersListsSection({ gameServer }: { gameServer: GameServer }) {
         <TableBody>
           {counters.map(([key, c]) => (
             <TableRow key={`counter-${key}`}>
-              <TableCell><Chip label="Counter" size="small" variant="outlined" /></TableCell>
-              <TableCell><strong>{key}</strong></TableCell>
-              <TableCell>{c.count} / {c.capacity}</TableCell>
+              <TableCell>
+                <Chip label="Counter" size="small" variant="outlined" />
+              </TableCell>
+              <TableCell>
+                <strong>{key}</strong>
+              </TableCell>
+              <TableCell>
+                {c.count} / {c.capacity}
+              </TableCell>
               <TableCell>{c.capacity - c.count}</TableCell>
-              <TableCell><UtilBar value={c.count} max={c.capacity} /></TableCell>
+              <TableCell>
+                <UtilBar value={c.count} max={c.capacity} />
+              </TableCell>
             </TableRow>
           ))}
           {lists.map(([key, l]) => {
             const count = l.values?.length ?? 0;
             return (
               <TableRow key={`list-${key}`}>
-                <TableCell><Chip label="List" size="small" variant="outlined" /></TableCell>
-                <TableCell><strong>{key}</strong></TableCell>
+                <TableCell>
+                  <Chip label="List" size="small" variant="outlined" />
+                </TableCell>
+                <TableCell>
+                  <strong>{key}</strong>
+                </TableCell>
                 <TableCell>
                   {count} / {l.capacity}
                   {count > 0 && (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
-                      {l.values.map(v => <Chip key={v} label={v} size="small" />)}
+                      {l.values.map(v => (
+                        <Chip key={v} label={v} size="small" />
+                      ))}
                     </Box>
                   )}
                 </TableCell>
                 <TableCell>{l.capacity - count}</TableCell>
-                <TableCell><UtilBar value={count} max={l.capacity} /></TableCell>
+                <TableCell>
+                  <UtilBar value={count} max={l.capacity} />
+                </TableCell>
               </TableRow>
             );
           })}
@@ -126,8 +142,20 @@ function ConfigurationSection({ gameServer }: { gameServer: GameServer }) {
   if (health) {
     rows.push(
       { label: 'Health Checking', value: health.disabled ? 'Disabled' : 'Enabled' },
-      { label: 'Initial Delay', value: health.initialDelaySeconds !== null && health.initialDelaySeconds !== undefined ? `${health.initialDelaySeconds}s` : '—' },
-      { label: 'Period', value: health.periodSeconds !== null && health.periodSeconds !== undefined ? `${health.periodSeconds}s` : '—' },
+      {
+        label: 'Initial Delay',
+        value:
+          health.initialDelaySeconds !== null && health.initialDelaySeconds !== undefined
+            ? `${health.initialDelaySeconds}s`
+            : '—',
+      },
+      {
+        label: 'Period',
+        value:
+          health.periodSeconds !== null && health.periodSeconds !== undefined
+            ? `${health.periodSeconds}s`
+            : '—',
+      },
       { label: 'Failure Threshold', value: health.failureThreshold ?? '—' }
     );
   }
@@ -168,9 +196,11 @@ export function GameServerDetail() {
         item && [
           {
             name: 'Fleet',
-            value: item.fleet
-              ? <FleetLink namespace={item.metadata.namespace} name={item.fleet} />
-              : '—',
+            value: item.fleet ? (
+              <FleetLink namespace={item.metadata.namespace} name={item.fleet} />
+            ) : (
+              '—'
+            ),
           },
           { name: 'State', value: item.state },
           { name: 'Address', value: item.address || '—' },

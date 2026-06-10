@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { GraphEdge, GraphNode } from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
+import {
+  GraphEdge,
+  GraphNode,
+} from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
 import { KubeObject } from '@kinvolk/headlamp-plugin/lib/k8s/cluster';
 
 export function makeNode(obj: KubeObject, weight?: number): GraphNode {
