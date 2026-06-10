@@ -43,10 +43,14 @@ export function GameServerTable({ gameServers }: GameServerTableProps) {
       <TableBody>
         {gameServers.map(gs => (
           <TableRow key={gs.metadata.uid}>
-            <TableCell><Link kubeObject={gs}>{gs.metadata.name}</Link></TableCell>
-            <TableCell><StateChip state={gs.state} /></TableCell>
+            <TableCell>
+              <Link kubeObject={gs}>{gs.metadata.name}</Link>
+            </TableCell>
+            <TableCell>
+              <StateChip state={gs.state} />
+            </TableCell>
             <TableCell>{gs.address || '—'}</TableCell>
-            <TableCell>{gs.ports  || '—'}</TableCell>
+            <TableCell>{gs.ports || '—'}</TableCell>
             <TableCell>{gs.nodeName || '—'}</TableCell>
           </TableRow>
         ))}

@@ -26,7 +26,9 @@ import { FleetLink } from '../../components/FleetLink';
 import { PreviewPanel } from '../../components/PreviewPanel';
 import { GameServer } from '../../resources/gameserver';
 
-interface ContainerStatus { ready: boolean }
+interface ContainerStatus {
+  ready: boolean;
+}
 
 export function PodPreview({ gameServer }: { gameServer: GameServer }) {
   const [pods] = K8s.ResourceClasses.Pod.useList({
@@ -37,12 +39,31 @@ export function PodPreview({ gameServer }: { gameServer: GameServer }) {
   const title = (
     <Typography variant="subtitle1">
       Pod for <strong>{gameServer.metadata.name}</strong>
-      {gameServer.fleet && <> · fleet <FleetLink namespace={gameServer.metadata.namespace} name={gameServer.fleet} /></>}
+      {gameServer.fleet && (
+        <>
+          {' '}
+          · fleet <FleetLink namespace={gameServer.metadata.namespace} name={gameServer.fleet} />
+        </>
+      )}
     </Typography>
   );
 
-  if (!pods) return <PreviewPanel title={title}><Typography variant="body2" color="text.secondary">Loading…</Typography></PreviewPanel>;
-  if (pods.length === 0) return <PreviewPanel title={title}><Typography variant="body2" color="text.secondary">No pod found.</Typography></PreviewPanel>;
+  if (!pods)
+    return (
+      <PreviewPanel title={title}>
+        <Typography variant="body2" color="text.secondary">
+          Loading…
+        </Typography>
+      </PreviewPanel>
+    );
+  if (pods.length === 0)
+    return (
+      <PreviewPanel title={title}>
+        <Typography variant="body2" color="text.secondary">
+          No pod found.
+        </Typography>
+      </PreviewPanel>
+    );
 
   return (
     <PreviewPanel title={title}>

@@ -33,7 +33,7 @@ export function GameServerList() {
   const [selected, setSelected] = useState<GameServer | null>(null);
 
   const toggle = (gs: GameServer) =>
-    setSelected(prev => prev?.metadata.uid === gs.metadata.uid ? null : gs);
+    setSelected(prev => (prev?.metadata.uid === gs.metadata.uid ? null : gs));
 
   return (
     <SectionBox title="Game Servers">
@@ -51,28 +51,46 @@ export function GameServerList() {
         </TableHead>
         <TableBody>
           {!gameServers ? (
-            <TableRow><TableCell colSpan={7}><Typography variant="body2" color="text.secondary">Loading…</Typography></TableCell></TableRow>
-          ) : gameServers.map(gs => {
-            return (
-              <TableRow
-                key={gs.metadata.uid}
-                sx={selected?.metadata.uid === gs.metadata.uid ? SELECTED_SX : ROW_SX}
-                onClick={() => toggle(gs)}
-              >
-                <TableCell><Link kubeObject={gs}>{gs.metadata.name}</Link></TableCell>
-                <TableCell>{gs.metadata.namespace}</TableCell>
-                <TableCell>
-                  {gs.fleet
-                    ? <FleetLink namespace={gs.metadata.namespace} name={gs.fleet} onClick={e => e.stopPropagation()} />
-                    : '—'}
-                </TableCell>
-                <TableCell><StateChip state={gs.state} /></TableCell>
-                <TableCell>{gs.address || '—'}</TableCell>
-                <TableCell>{gs.ports || '—'}</TableCell>
-                <TableCell>{gs.nodeName || '—'}</TableCell>
-              </TableRow>
-            );
-          })}
+            <TableRow>
+              <TableCell colSpan={7}>
+                <Typography variant="body2" color="text.secondary">
+                  Loading…
+                </Typography>
+              </TableCell>
+            </TableRow>
+          ) : (
+            gameServers.map(gs => {
+              return (
+                <TableRow
+                  key={gs.metadata.uid}
+                  sx={selected?.metadata.uid === gs.metadata.uid ? SELECTED_SX : ROW_SX}
+                  onClick={() => toggle(gs)}
+                >
+                  <TableCell>
+                    <Link kubeObject={gs}>{gs.metadata.name}</Link>
+                  </TableCell>
+                  <TableCell>{gs.metadata.namespace}</TableCell>
+                  <TableCell>
+                    {gs.fleet ? (
+                      <FleetLink
+                        namespace={gs.metadata.namespace}
+                        name={gs.fleet}
+                        onClick={e => e.stopPropagation()}
+                      />
+                    ) : (
+                      '—'
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <StateChip state={gs.state} />
+                  </TableCell>
+                  <TableCell>{gs.address || '—'}</TableCell>
+                  <TableCell>{gs.ports || '—'}</TableCell>
+                  <TableCell>{gs.nodeName || '—'}</TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
       {selected && <PodPreview gameServer={selected} />}

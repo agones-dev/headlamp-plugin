@@ -34,9 +34,15 @@ import { FleetAutoscaler } from '../../resources/fleetautoscaler';
 import { GameServer } from '../../resources/gameserver';
 
 const STATE_ORDER = [
-  'Ready', 'Allocated', 'Reserved',
-  'Creating', 'Scheduled', 'RequestReady',
-  'Shutdown', 'Unhealthy', 'Error',
+  'Ready',
+  'Allocated',
+  'Reserved',
+  'Creating',
+  'Scheduled',
+  'RequestReady',
+  'Shutdown',
+  'Unhealthy',
+  'Error',
 ];
 
 function StatCard({ label, value, color }: { label: string; value: number; color?: string }) {
@@ -217,12 +223,13 @@ export function AgonesOverview() {
                     {a.currentReplicas} / {a.desiredReplicas}
                   </TableCell>
                   <TableCell>
-                    {a.lastScaleTime
-                      ? new Date(a.lastScaleTime).toLocaleString()
-                      : '—'}
+                    {a.lastScaleTime ? new Date(a.lastScaleTime).toLocaleString() : '—'}
                   </TableCell>
                   <TableCell>
-                    <AutoscalerStatusChip ableToScale={a.ableToScale} scalingLimited={a.scalingLimited} />
+                    <AutoscalerStatusChip
+                      ableToScale={a.ableToScale}
+                      scalingLimited={a.scalingLimited}
+                    />
                   </TableCell>
                 </TableRow>
               ))

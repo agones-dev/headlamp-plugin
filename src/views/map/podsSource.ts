@@ -15,7 +15,10 @@
  */
 
 import { K8s } from '@kinvolk/headlamp-plugin/lib';
-import { GraphEdge, GraphSource } from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
+import {
+  GraphEdge,
+  GraphSource,
+} from '@kinvolk/headlamp-plugin/lib/components/resourceMap/graph/graphModel';
 import { useMemo } from 'react';
 import { GameServer } from '../../resources/gameserver';
 import { buildNameToUidMap, makeNode, ownerEdges } from './graphHelpers';
@@ -24,7 +27,7 @@ export const podsSource: GraphSource = {
   id: 'agones-pods',
   label: 'Pods (Agones)',
   useData() {
-    const [pods]        = K8s.ResourceClasses.Pod.useList();
+    const [pods] = K8s.ResourceClasses.Pod.useList();
     const [gameServers] = GameServer.useList();
     return useMemo(() => {
       if (!pods) return null;
@@ -42,7 +45,11 @@ export const podsSource: GraphSource = {
         if (gsName) {
           const gsUid = gsUidMap.get(`${pod.metadata.namespace}/${gsName}`);
           if (gsUid) {
-            labelEdges.push({ id: `gs-pod-${gsUid}-${pod.metadata.uid}`, source: gsUid, target: pod.metadata.uid });
+            labelEdges.push({
+              id: `gs-pod-${gsUid}-${pod.metadata.uid}`,
+              source: gsUid,
+              target: pod.metadata.uid,
+            });
           }
         }
       }
