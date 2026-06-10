@@ -1,7 +1,7 @@
 # Agones Headlamp Plugin
 
-> ⚠️ **SUPER ALPHA — Early Stages**
-> This plugin is in very early development. Expect breaking changes, missing features, and rough edges. It is currently only available via manual installation.
+> ⚠️ **Early Development**
+> This plugin is under active development as part of the LFX Mentorship programme. APIs and features may change between releases. Manual installation is currently required.
 
 A [Headlamp](https://github.com/kubernetes-sigs/headlamp) plugin to visualise [Agones](https://agones.dev) resources and workflows directly in your Kubernetes UI.
 
@@ -9,7 +9,7 @@ A [Headlamp](https://github.com/kubernetes-sigs/headlamp) plugin to visualise [A
 
 ## Features
 
-_We have these things at the moment. I wouldn't say that they are done **well**. They definitely need review and improvement_ 😄
+The plugin currently provides the following capabilities:
 
 - **Overview** — At-a-glance summary of your Agones resources across the cluster.
 - **Fleets** — List and detail views for Agones `Fleet` resources, including replica status and scaling controls.
@@ -54,10 +54,11 @@ This plugin follows the standard Headlamp plugin development workflow. See the [
 
 ## Contributing
 
-Contributions are welcome! Please open issues or pull requests.
-> ⚠️🤣⚠️🤣⚠️🤣  
-> NO BUT SERIOUSLY, WE WERE JUST PLAYING WHEN WE INITIALLY MAKING THIS. IT NEEDS SOLID IMPROVEMENT.  
-> ⚠️🤣⚠️🤣⚠️🤣
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, CI checks, and pull request guidelines.
+
+- [Bug report](.github/ISSUE_TEMPLATE/bug_report.md)
+- [Feature request](.github/ISSUE_TEMPLATE/feature_request.md)
+- [Security policy](.github/SECURITY.md)
 
 ## License
 
