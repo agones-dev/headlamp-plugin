@@ -19,6 +19,12 @@
 
 Fixes #
 
+**Did you use AI tools in preparing this PR?**:
+<!--
+If you used AI tools in preparing your PR, you must disclose this in the description of your PR.
+-->
+Y/N
+
 ## Screenshots / recordings
 
 <!-- For UI changes, add before/after screenshots or a short screen recording. Delete this section if not applicable. -->

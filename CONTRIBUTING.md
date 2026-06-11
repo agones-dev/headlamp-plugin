@@ -53,18 +53,6 @@ npm run test
 
 All five must pass. The CI workflow enforces these on every pull request.
 
-## Branch naming
-
-Use descriptive prefixes for your branches:
-
-| Prefix | Use for |
-|--------|---------|
-| `feat/` | New features (e.g. `feat/delete-gameserver-action`) |
-| `fix/` | Bug fixes (e.g. `fix/sidebar-visibility-guard`) |
-| `ci/` | CI/tooling changes (e.g. `ci/github-actions-setup`) |
-| `docs/` | Documentation only (e.g. `docs/rbac-examples`) |
-| `refactor/` | Code cleanup with no behaviour change |
-
 ## Commit messages
 
 Follow the [Conventional Commits](https://www.conventionalcommits.org/) style:
@@ -84,6 +72,48 @@ chore: run prettier format on all source files
 - Link related issues using `Fixes #123`.
 - Add or update tests for non-trivial logic (see `src/**/*.test.ts`).
 - Include before/after screenshots for any UI changes.
+
+## Developer Certificate of Origin (DCO)
+
+All contributions to this project must be signed off in accordance with the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). This is enforced via the DCO GitHub App on all pull requests.
+
+Signing off certifies that you have the right to submit the code you are contributing and that you agree to the DCO terms. To sign off a commit, use the `-s` or `--signoff` flag with `git commit`:
+
+```bash
+git commit -s -m "Your commit message"
+```
+
+This appends a `Signed-off-by` line to your commit message using your configured git name and email:
+
+```
+Signed-off-by: Your Name <your.email@example.com>
+```
+
+Make sure your `git user.name` and `user.email` are set correctly:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+If you forgot to sign off on previous commits in a pull request, you can amend them:
+
+- For the most recent commit: `git commit --amend --signoff`
+- For multiple commits: `git rebase --signoff HEAD~N` (where N is the number of commits to sign)
+
+Then force-push your branch to update the pull request.
+
+## AI Usage Policy
+
+This project follows the [Agones AI Usage Policy](https://github.com/agones-dev/agones/blob/main/CONTRIBUTING.md).
+
+Using AI tools to help write your PR is acceptable, **but as the author, you are responsible for understanding every change**.
+
+- If you used AI tools in preparing your PR, you must disclose this in the PR description.
+- Listing AI tooling as a co-author, co-signing commits using an AI tool, or using the `assisted-by`, `co-developed` or similar commit trailer is not allowed.
+- Large AI-generated PRs and AI-generated commit messages are not allowed.
+- **Do not leave the first review of AI-generated changes to the reviewers**. Verify the changes (code review, testing, etc.) before submitting your PR.
+- **When responding to review comments, you must do so without relying on AI tools**. Reviewers want to engage directly with you, not with generated responses.
 
 ## Project layout
 
