@@ -15,17 +15,16 @@
  */
 
 import React from 'react';
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { StateChip } from './StateChip';
 
 // We test that StateChip renders without crashing for every known Agones
-// GameServer lifecycle state — including the two states the original code
-// does not yet map (PortAllocation, Starting), which should fall back to
-// the 'default' chip color.
+// GameServer lifecycle state as documented in the official state diagram:
+// https://agones.dev/site/docs/reference/gameserver/#gameserver-state-diagram
 
 describe('StateChip', () => {
   // In-progress lifecycle states → 'info' chip
-  it.each(['Creating', 'Scheduled', 'RequestReady'])(
+  it.each(['PortAllocation', 'Creating', 'Starting', 'Scheduled', 'RequestReady'])(
     'should render "%s" as an info chip',
     state => {
       const element = React.createElement(StateChip, { state });
@@ -63,12 +62,9 @@ describe('StateChip', () => {
   });
 
   // Unknown / unmapped states should not crash (fallback to 'default')
-  it.each(['PortAllocation', 'Starting', 'SomeUnknownState', ''])(
-    'should handle unmapped state "%s" gracefully',
-    state => {
-      const element = React.createElement(StateChip, { state });
-      expect(element).toBeDefined();
-      expect(element.props.state).toBe(state);
-    }
-  );
+  it.each(['SomeUnknownState', ''])('should handle unmapped state "%s" gracefully', state => {
+    const element = React.createElement(StateChip, { state });
+    expect(element).toBeDefined();
+    expect(element.props.state).toBe(state);
+  });
 });

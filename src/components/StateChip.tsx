@@ -21,7 +21,9 @@ type ChipColor = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'succe
 
 const STATE_COLORS: Record<string, ChipColor> = {
   // In-progress lifecycle states
+  PortAllocation: 'info',
   Creating: 'info',
+  Starting: 'info',
   Scheduled: 'info',
   RequestReady: 'info',
   // Stable states
