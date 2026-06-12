@@ -18,11 +18,17 @@ import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
 
 export async function isAgonesInstalled(): Promise<boolean> {
   try {
+    console.log('[Agones] Checking if Agones is installed...');
     const response = await ApiProxy.request('/apis/agones.dev/v1', {
       method: 'GET',
     });
-    return !!response;
+    console.log('[Agones] API response:', JSON.stringify(response));
+    // Verify the response is a real K8s API resource list, not an error object.
+    const result = response?.kind === 'APIResourceList' && Array.isArray(response?.resources);
+    console.log('[Agones] Detection result:', result);
+    return result;
   } catch (error) {
+    console.log('[Agones] API error (not installed):', error);
     return false;
   }
 }

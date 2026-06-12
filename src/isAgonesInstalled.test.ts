@@ -27,8 +27,11 @@ import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
 import { isAgonesInstalled } from './isAgonesInstalled';
 
 describe('isAgonesInstalled', () => {
-  it('should return true when the Agones API group responds successfully', async () => {
-    vi.mocked(ApiProxy.request).mockResolvedValue({ kind: 'APIResourceList' });
+  it('should return true when the Agones API group responds with a valid APIResourceList', async () => {
+    vi.mocked(ApiProxy.request).mockResolvedValue({
+      kind: 'APIResourceList',
+      resources: [{ name: 'gameservers' }],
+    });
 
     const result = await isAgonesInstalled();
 
@@ -38,8 +41,11 @@ describe('isAgonesInstalled', () => {
     });
   });
 
-  it('should return true for any truthy response', async () => {
-    vi.mocked(ApiProxy.request).mockResolvedValue({ resources: [] });
+  it('should return true when resources array is empty but valid', async () => {
+    vi.mocked(ApiProxy.request).mockResolvedValue({
+      kind: 'APIResourceList',
+      resources: [],
+    });
 
     const result = await isAgonesInstalled();
 
@@ -72,6 +78,28 @@ describe('isAgonesInstalled', () => {
 
   it('should return false when the response is undefined', async () => {
     vi.mocked(ApiProxy.request).mockResolvedValue(undefined);
+
+    const result = await isAgonesInstalled();
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false when response is a non-APIResourceList object (error object)', async () => {
+    vi.mocked(ApiProxy.request).mockResolvedValue({
+      kind: 'Status',
+      status: 'Failure',
+      message: 'the server could not find the requested resource',
+    });
+
+    const result = await isAgonesInstalled();
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false when response has no resources field', async () => {
+    vi.mocked(ApiProxy.request).mockResolvedValue({
+      kind: 'APIResourceList',
+    });
 
     const result = await isAgonesInstalled();
 
