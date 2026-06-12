@@ -1,0 +1,29 @@
+changelog:
+  exclude:
+    labels:
+      - duplicate
+      - question
+      - invalid
+      - wontfix
+  categories:
+    - title: Breaking changes
+      labels:
+        - kind/breaking
+    - title: Features
+      labels:
+        - kind/feature
+    - title: Bug fixes
+      labels:
+        - kind/bug
+    - title: Documentation
+      labels:
+        - kind/documentation
+    - title: Security
+      labels:
+        - area/security
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Other
+      labels:
+        - '*'

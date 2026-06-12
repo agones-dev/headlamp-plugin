@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Agones documentation
+    url: https://agones.dev/site/docs/
+    about: Agones install, CRDs, and game server lifecycle (not this UI plugin)
+  - name: Headlamp plugin development
+    url: https://headlamp.dev/docs/latest/development/plugins/getting-started
+    about: Headlamp plugin SDK, packaging, and core UI behavior
+  - name: Report a plugin security issue
+    url: https://github.com/agones-dev/headlamp-plugin/security/advisories/new
+    about: Private security reports for this plugin repository
+  - name: Agones security
+    url: https://github.com/googleforgames/agones/security/advisories/new
+    about: Security issues in Agones itself (upstream control plane)
