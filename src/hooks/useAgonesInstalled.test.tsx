@@ -16,14 +16,17 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useAgonesInstalled } from './useAgonesInstalled';
 
-// Mock the isAgonesInstalled function
-vi.mock('../isAgonesInstalled', () => ({
-  isAgonesInstalled: vi.fn(),
+// Mock ApiProxy so the hook's internal isAgonesInstalled() call
+// doesn't make real HTTP requests.
+vi.mock('@kinvolk/headlamp-plugin/lib', () => ({
+  ApiProxy: {
+    request: vi.fn(),
+  },
 }));
 
-import { isAgonesInstalled } from '../isAgonesInstalled';
+import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
+import { useAgonesInstalled } from './useAgonesInstalled';
 
 describe('useAgonesInstalled', () => {
   afterEach(() => {
@@ -31,7 +34,8 @@ describe('useAgonesInstalled', () => {
   });
 
   it('should start in loading state', () => {
-    vi.mocked(isAgonesInstalled).mockReturnValue(new Promise(() => {})); // never resolves
+    // Never-resolving promise keeps the hook in loading state
+    vi.mocked(ApiProxy.request).mockReturnValue(new Promise(() => {}));
     const { result } = renderHook(() => useAgonesInstalled());
 
     expect(result.current.isAgonesInstalled).toBeNull();
@@ -39,7 +43,11 @@ describe('useAgonesInstalled', () => {
   });
 
   it('should return isAgonesInstalled=true when Agones is detected', async () => {
-    vi.mocked(isAgonesInstalled).mockResolvedValue(true);
+    vi.mocked(ApiProxy.request).mockResolvedValue({
+      kind: 'APIResourceList',
+      resources: [{ name: 'gameservers' }],
+    });
+
     const { result } = renderHook(() => useAgonesInstalled());
 
     await waitFor(() => {
@@ -50,7 +58,8 @@ describe('useAgonesInstalled', () => {
   });
 
   it('should return isAgonesInstalled=false when Agones is not detected', async () => {
-    vi.mocked(isAgonesInstalled).mockResolvedValue(false);
+    vi.mocked(ApiProxy.request).mockRejectedValue(new Error('404 Not Found'));
+
     const { result } = renderHook(() => useAgonesInstalled());
 
     await waitFor(() => {

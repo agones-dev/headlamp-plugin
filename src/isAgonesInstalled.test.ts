@@ -24,7 +24,7 @@ vi.mock('@kinvolk/headlamp-plugin/lib', () => ({
 }));
 
 import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
-import { isAgonesInstalled } from './isAgonesInstalled';
+import { isAgonesInstalled } from './hooks/useAgonesInstalled';
 
 describe('isAgonesInstalled', () => {
   it('should return true when the Agones API group responds with a valid APIResourceList', async () => {
