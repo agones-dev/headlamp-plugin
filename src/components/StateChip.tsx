@@ -19,20 +19,44 @@ import React from 'react';
 
 type ChipColor = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
 
+/**
+ * Maps each Agones GameServer lifecycle state to a MUI {@link Chip} color.
+ *
+ * - **info** — In-progress states while the GameServer is being prepared.
+ * - **success** — The GameServer is ready to accept connections.
+ * - **warning** — The GameServer has been allocated to a game session.
+ * - **secondary** — The GameServer is reserved for future allocation.
+ * - **error** — The GameServer has encountered an error or is unhealthy.
+ * - **default** — The GameServer has been shut down.
+ *
+ * States not present in this map fall back to `'default'`.
+ *
+ * @see {@link https://agones.dev/site/docs/reference/gameserver/#gameserver-state-diagram | Agones GameServer State Diagram}
+ */
 const STATE_COLORS: Record<string, ChipColor> = {
-  // In-progress lifecycle states
+  /** Port is being allocated to the GameServer. */
   PortAllocation: 'info',
+  /** GameServer pod is being created. */
   Creating: 'info',
+  /** GameServer process is starting inside the pod. */
   Starting: 'info',
+  /** GameServer has been scheduled onto a node. */
   Scheduled: 'info',
+  /** SDK has called {@link https://agones.dev/site/docs/guides/client-sdks/#ready | Ready()}, awaiting transition. */
   RequestReady: 'info',
-  // Stable states
+
+  /** GameServer is ready to accept player connections. */
   Ready: 'success',
+  /** GameServer has been allocated to a game session. */
   Allocated: 'warning',
+  /** GameServer is reserved for future allocation via the SDK. */
   Reserved: 'secondary',
-  // Terminal / problem states
+
+  /** GameServer has been shut down gracefully. */
   Shutdown: 'default',
+  /** GameServer encountered an unrecoverable error. */
   Error: 'error',
+  /** Health checks have failed for this GameServer. */
   Unhealthy: 'error',
 };
 
