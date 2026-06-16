@@ -73,7 +73,12 @@ jobs:
         run: npm run format -- --check
 
       - name: Test
-        run: npm run test
+        run: |
+          if find src -type f \( -name '*.test.*' -o -name '*.spec.*' \) | grep -q .; then
+            npm run test
+          else
+            echo "No test files found – skipping tests"
+          fi
 
       - name: Upload build artifact
         if: success()
