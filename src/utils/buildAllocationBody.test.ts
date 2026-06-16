@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { describe, expect,it } from 'vitest';
-import { AllocationFormState,buildAllocationBody } from './buildAllocationBody';
+import { describe, expect, it } from 'vitest';
+import { AllocationFormState, buildAllocationBody } from './buildAllocationBody';
 
 function makeFormState(overrides: Partial<AllocationFormState> = {}): AllocationFormState {
   return {
