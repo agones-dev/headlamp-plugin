@@ -15,7 +15,7 @@
  */
 
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
+
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
@@ -23,18 +23,10 @@ import React from 'react';
 import { useAgonesInstalled } from '../hooks/useAgonesInstalled';
 
 interface NotInstalledBannerProps {
-  isLoading?: boolean;
+  // No props needed anymore since loading state is handled by parent
 }
 
-function NotInstalledBanner({ isLoading = false }: NotInstalledBannerProps) {
-  if (isLoading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" p={2} minHeight="200px">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
+function NotInstalledBanner(_props: NotInstalledBannerProps) {
   return (
     <Box display="flex" justifyContent="center" alignItems="center" p={2} minHeight="200px">
       <Grid container spacing={2} direction="column" justifyContent="center" alignItems="center">
@@ -66,12 +58,44 @@ interface AgonesInstallCheckProps {
   fallback?: React.ReactNode;
 }
 
+/**
+ * Wrapper component that gates its children behind an Agones CRD detection
+ * check.  While the check is in flight nothing is rendered; if the CRDs are
+ * absent a {@link NotInstalledBanner} (or a custom `fallback`) is rendered
+ * instead of the children.
+ */
 export function AgonesInstallCheck({ children, fallback }: AgonesInstallCheckProps) {
-  const { isAgonesInstalled, isAgonesCheckLoading } = useAgonesInstalled();
+  const { isAgonesInstalled } = useAgonesInstalled();
 
-  if (!isAgonesInstalled) {
-    return <>{fallback || <NotInstalledBanner isLoading={isAgonesCheckLoading} />}</>;
+  if (isAgonesInstalled === null) {
+    return null;
+  }
+
+  if (isAgonesInstalled === false) {
+    return <>{fallback || <NotInstalledBanner />}</>;
   }
 
   return <>{children}</>;
 }
+
+/**
+ * Higher-order component that wraps `Component` with {@link AgonesInstallCheck}.
+ *
+ * Use this instead of manually nesting `<AgonesInstallCheck>` around every
+ * route component — it keeps `registerRoute` calls concise and ensures
+ * the guard is applied consistently.
+ *
+ * @example
+ * ```tsx
+ * registerRoute({
+ *   path: '/agones',
+ *   component: withInstallCheck(AgonesOverview),
+ * });
+ * ```
+ */
+export const withInstallCheck = (Component: React.ComponentType) => () =>
+  (
+    <AgonesInstallCheck>
+      <Component />
+    </AgonesInstallCheck>
+  );
