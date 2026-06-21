@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
 import { renderHook, waitFor } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useAgonesInstalled } from './useAgonesInstalled';
 
 // Mock ApiProxy so the hook's internal isAgonesInstalled() call
 // doesn't make real HTTP requests.
@@ -24,9 +26,6 @@ vi.mock('@kinvolk/headlamp-plugin/lib', () => ({
     request: vi.fn(),
   },
 }));
-
-import { ApiProxy } from '@kinvolk/headlamp-plugin/lib';
-import { useAgonesInstalled } from './useAgonesInstalled';
 
 describe('useAgonesInstalled', () => {
   afterEach(() => {

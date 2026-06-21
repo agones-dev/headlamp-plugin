@@ -15,18 +15,13 @@
  */
 
 import Box from '@mui/material/Box';
-
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import { useAgonesInstalled } from '../hooks/useAgonesInstalled';
 
-interface NotInstalledBannerProps {
-  // No props needed anymore since loading state is handled by parent
-}
-
-function NotInstalledBanner(_props: NotInstalledBannerProps) {
+function NotInstalledBanner() {
   return (
     <Box display="flex" justifyContent="center" alignItems="center" p={2} minHeight="200px">
       <Grid container spacing={2} direction="column" justifyContent="center" alignItems="center">
