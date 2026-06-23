@@ -28,12 +28,36 @@ export interface AgonesFleet extends KubeObjectInterface {
       };
     };
     template: object;
+    /**
+     * Labels/annotations to apply to GameServers when allocation count exceeds
+     * the desired replicas.
+     *
+     * @see {@link https://agones.dev/site/docs/reference/fleet/#allocation-overflow | Allocation Overflow}
+     */
+    allocationOverflow?: {
+      labels?: Record<string, string>;
+      annotations?: Record<string, string>;
+    };
+    /**
+     * Scheduling priorities used to sort GameServers during allocation.
+     *
+     * @see {@link https://agones.dev/site/docs/advanced/scheduling-and-autoscaling/#fleet-scheduling | Fleet Scheduling}
+     */
+    priorities?: Array<{
+      type: 'Counter' | 'List';
+      key: string;
+      order: 'Ascending' | 'Descending';
+    }>;
   };
   status?: {
     replicas?: number;
     readyReplicas?: number;
     reservedReplicas?: number;
     allocatedReplicas?: number;
+    /** Aggregate counter status across all GameServers in the Fleet. */
+    counters?: Record<string, { count: number; capacity: number }>;
+    /** Aggregate list status across all GameServers in the Fleet. */
+    lists?: Record<string, { values: string[]; capacity: number }>;
   };
 }
 
@@ -89,5 +113,31 @@ export class Fleet extends KubeObject<AgonesFleet> {
 
   get maxUnavailable(): string | number | undefined {
     return this.spec.strategy?.rollingUpdate?.maxUnavailable;
+  }
+
+  /**
+   * Allocation overflow metadata applied when allocation count exceeds desired replicas.
+   *
+   * @see {@link https://agones.dev/site/docs/reference/fleet/#allocation-overflow | Allocation Overflow}
+   */
+  get allocationOverflow():
+    | { labels?: Record<string, string>; annotations?: Record<string, string> }
+    | undefined {
+    return this.spec.allocationOverflow;
+  }
+
+  /** Scheduling priorities for GameServer allocation ordering. */
+  get priorities(): Array<{ type: string; key: string; order: string }> {
+    return this.spec.priorities ?? [];
+  }
+
+  /** Aggregate counter status across all GameServers in the Fleet. */
+  get counters(): Record<string, { count: number; capacity: number }> {
+    return this.status.counters ?? {};
+  }
+
+  /** Aggregate list status across all GameServers in the Fleet. */
+  get lists(): Record<string, { values: string[]; capacity: number }> {
+    return this.status.lists ?? {};
   }
 }

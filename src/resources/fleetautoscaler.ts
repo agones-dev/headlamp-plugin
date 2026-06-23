@@ -47,9 +47,29 @@ export interface AgonesFleetAutoscaler extends KubeObjectInterface {
           port?: number;
         };
       };
+      /**
+       * WebAssembly-based autoscaling policy.
+       *
+       * @see {@link https://agones.dev/site/docs/advanced/scheduling-and-autoscaling/#custom-autoscaler-with-wasm | Wasm Autoscaler}
+       */
+      wasm?: {
+        url: string;
+        requestsPerSecond?: number;
+      };
       schedule?: {
-        between?: { start: string; end: string };
-        activePeriod?: { timezone: string; schedule: string };
+        between?: {
+          start: string;
+          end: string;
+          minReplicas: number;
+          maxReplicas: number;
+        };
+        activePeriod?: {
+          timezone: string;
+          /** Cron expression for when the period begins. */
+          startCron: string;
+          /** Duration of the active period (e.g. '2h', '30m'). */
+          duration: string;
+        };
         policy: {
           type: string;
           buffer?: { bufferSize: number | string; minReplicas: number; maxReplicas: number };

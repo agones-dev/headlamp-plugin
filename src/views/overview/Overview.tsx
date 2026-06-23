@@ -34,10 +34,12 @@ import { FleetAutoscaler } from '../../resources/fleetautoscaler';
 import { GameServer } from '../../resources/gameserver';
 
 const STATE_ORDER = [
+  'PortAllocation',
+  'Creating',
+  'Starting',
   'Ready',
   'Allocated',
   'Reserved',
-  'Creating',
   'Scheduled',
   'RequestReady',
   'Shutdown',
