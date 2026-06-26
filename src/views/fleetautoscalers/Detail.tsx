@@ -74,7 +74,7 @@ function policyExtraInfo(item: FleetAutoscaler) {
       return [
         {
           name: 'Cron Schedule',
-          value: policy.schedule?.activePeriod?.schedule ?? '—',
+          value: policy.schedule?.activePeriod?.startCron ?? '—',
         },
         {
           name: 'Timezone',
@@ -152,7 +152,7 @@ function policyExplanation(item: FleetAutoscaler): string {
     case 'Webhook':
       return `Scaling decisions are delegated to an external webhook. The webhook receives current fleet state and responds with the desired replica count.`;
     case 'Schedule': {
-      const sched = policy.schedule?.activePeriod?.schedule;
+      const sched = policy.schedule?.activePeriod?.startCron;
       const tz = policy.schedule?.activePeriod?.timezone ?? 'UTC';
       const nested = policy.schedule?.policy?.type ?? 'Buffer';
       return sched

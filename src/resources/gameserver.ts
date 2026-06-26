@@ -38,6 +38,24 @@ export interface ListStatus {
   capacity: number;
 }
 
+/**
+ * Eviction configuration for a GameServer.
+ *
+ * @see {@link https://agones.dev/site/docs/advanced/controlling-disruption/ | Controlling Disruption}
+ */
+export interface Eviction {
+  /** Safe strategy: 'Always' | 'OnUpgrade' | 'Never'. */
+  safe: string;
+}
+
+/**
+ * A routable address assigned to the GameServer (e.g. NodeInternalIP, NodeExternalIP).
+ */
+export interface NodeAddress {
+  type: string;
+  address: string;
+}
+
 export interface AgonesGameServer extends KubeObjectInterface {
   spec: {
     scheduling: string;
@@ -56,6 +74,8 @@ export interface AgonesGameServer extends KubeObjectInterface {
     };
     counters?: Record<string, { capacity: number }>;
     lists?: Record<string, { capacity: number; values?: string[] }>;
+    /** Eviction tolerance of the GameServer. */
+    eviction?: Eviction;
   };
   status?: {
     state?: string;
@@ -64,6 +84,10 @@ export interface AgonesGameServer extends KubeObjectInterface {
     nodeName?: string;
     counters?: Record<string, CounterStatus>;
     lists?: Record<string, ListStatus>;
+    /** All routable addresses (NodeInternalIP, NodeExternalIP, etc.). */
+    addresses?: NodeAddress[];
+    /** ISO 8601 timestamp: the GameServer is reserved until this time. */
+    reservedUntil?: string;
   };
 }
 
@@ -113,6 +137,28 @@ export class GameServer extends KubeObject<AgonesGameServer> {
 
   get lists(): Record<string, ListStatus> {
     return this.status.lists ?? {};
+  }
+
+  /**
+   * Eviction safe mode for this GameServer.
+   *
+   * @see {@link https://agones.dev/site/docs/advanced/controlling-disruption/ | Controlling Disruption}
+   */
+  get eviction(): string {
+    return this.spec.eviction?.safe ?? 'Never';
+  }
+
+  /** All routable addresses assigned to the GameServer. */
+  get addresses(): NodeAddress[] {
+    return this.status.addresses ?? [];
+  }
+
+  /**
+   * ISO 8601 timestamp until which the GameServer is reserved.
+   * Returns `undefined` if the server is not reserved.
+   */
+  get reservedUntil(): string | undefined {
+    return this.status.reservedUntil;
   }
 
   /** Merged port info: spec metadata (policy, containerPort) + status (host port). */
