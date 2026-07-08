@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Router } from '@kinvolk/headlamp-plugin/lib';
+import { Link } from '@kinvolk/headlamp-plugin/lib/components/common';
 import React from 'react';
 
 interface FleetLinkProps {
@@ -24,10 +24,9 @@ interface FleetLinkProps {
 }
 
 export function FleetLink({ namespace, name, onClick }: FleetLinkProps) {
-  const url = Router.createRouteURL('agones-fleet', { namespace, name });
   return (
-    <a href={url} onClick={onClick}>
+    <Link routeName="agones-fleet" params={{ namespace, name }} onClick={onClick}>
       {name}
-    </a>
+    </Link>
   );
 }
