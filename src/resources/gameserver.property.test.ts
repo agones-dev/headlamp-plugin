@@ -25,7 +25,7 @@ import { GameServer } from './gameserver';
 function fcGameServerJson(): fc.Arbitrary<any> {
   const fcSpecPort = fc.record({
     name: fc.option(fc.string({ minLength: 1, maxLength: 15 }), { nil: undefined }),
-    portPolicy: fc.option(fc.constantFrom('Dynamic', 'Static', 'Passthrough'), { nil: undefined }),
+    portPolicy: fc.option(fc.constantFrom('Dynamic', 'Static', 'Passthrough', 'None'), { nil: undefined }),
     containerPort: fc.option(fc.integer({ min: 1, max: 65535 }), { nil: undefined }),
     protocol: fc.option(fc.constantFrom('UDP', 'TCP', 'TCPUDP'), { nil: undefined }),
   });
@@ -191,7 +191,7 @@ describe('GameServer getters — property tests', () => {
         const gs = new GameServer(json);
         for (const mp of gs.mergedPorts) {
           expect(['UDP', 'TCP', 'TCPUDP']).toContain(mp.protocol);
-          expect(['Dynamic', 'Static', 'Passthrough']).toContain(mp.portPolicy);
+          expect(['Dynamic', 'Static', 'Passthrough', 'None']).toContain(mp.portPolicy);
         }
       })
     );
