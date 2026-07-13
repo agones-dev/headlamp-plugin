@@ -61,21 +61,45 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          if ! npm run build; then
+            echo ""
+            echo "::error::Build failed. Run 'npm run build' locally to reproduce the error."
+            exit 1
+          fi
 
       - name: Type check
-        run: npm run tsc
+        run: |
+          if ! npm run tsc; then
+            echo ""
+            echo "::error::Type check failed. Run 'npm run tsc' locally to see the TypeScript errors."
+            exit 1
+          fi
 
       - name: Lint
-        run: npm run lint
+        run: |
+          if ! npm run lint; then
+            echo ""
+            echo "::error::Lint failed. Run 'npm run lint' locally to see the issues, or 'npm run lint-fix' to auto-fix import ordering."
+            exit 1
+          fi
 
       - name: Check formatting
-        run: npm run format -- --check
+        run: |
+          if ! npm run format -- --check; then
+            echo ""
+            echo "::error::Formatting check failed. Run 'npm run format' locally to auto-fix all files, then commit and push."
+            exit 1
+          fi
 
       - name: Test
         run: |
           if find src -type f \( -name '*.test.*' -o -name '*.spec.*' \) | grep -q .; then
-            npm run test
+            if ! npm run test; then
+              echo ""
+              echo "::error::Tests failed. Run 'npm run test' locally to see the failing tests."
+              exit 1
+            fi
           else
             echo "No test files found – skipping tests"
           fi
