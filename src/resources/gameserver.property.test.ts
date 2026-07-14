@@ -25,7 +25,9 @@ import { GameServer } from './gameserver';
 function fcGameServerJson(): fc.Arbitrary<any> {
   const fcSpecPort = fc.record({
     name: fc.option(fc.string({ minLength: 1, maxLength: 15 }), { nil: undefined }),
-    portPolicy: fc.option(fc.constantFrom('Dynamic', 'Static', 'Passthrough', 'None'), { nil: undefined }),
+    portPolicy: fc.option(fc.constantFrom('Dynamic', 'Static', 'Passthrough', 'None'), {
+      nil: undefined,
+    }),
     containerPort: fc.option(fc.integer({ min: 1, max: 65535 }), { nil: undefined }),
     protocol: fc.option(fc.constantFrom('UDP', 'TCP', 'TCPUDP'), { nil: undefined }),
   });
