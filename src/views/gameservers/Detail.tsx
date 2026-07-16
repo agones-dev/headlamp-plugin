@@ -25,6 +25,8 @@ import TableRow from '@mui/material/TableRow';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { FleetLink } from '../../components/FleetLink';
+import { GameServerStatusBanner } from '../../components/GameServerStatusBanner';
+import { StateChip } from '../../components/StateChip';
 import { UtilBar } from '../../components/UtilBar';
 import { GameServer } from '../../resources/gameserver';
 
@@ -202,7 +204,7 @@ export function GameServerDetail() {
               '—'
             ),
           },
-          { name: 'State', value: item.state },
+          { name: 'State', value: <StateChip state={item.state} /> },
           { name: 'Address', value: item.address || '—' },
           { name: 'Ports', value: item.ports || '—' },
           { name: 'Node', value: item.nodeName || '—' },
@@ -210,6 +212,7 @@ export function GameServerDetail() {
       }
       extraSections={item =>
         item && [
+          <GameServerStatusBanner state={item.state} />,
           <PortsSection gameServer={item} />,
           <CountersListsSection gameServer={item} />,
           <ConfigurationSection gameServer={item} />,
