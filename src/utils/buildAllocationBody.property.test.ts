@@ -172,6 +172,25 @@ describe('buildAllocationBody — property tests', () => {
     );
   });
 
+  it('should never include list mutations with empty addValues', () => {
+    fc.assert(
+      fc.property(fcAllocationFormState(), form => {
+        const body = buildAllocationBody(form);
+        const spec = body.spec as Record<string, Record<string, { addValues: string[] }>>;
+        if (spec.lists) {
+          for (const [key, mut] of Object.entries(spec.lists)) {
+            expect(key.trim()).not.toBe('');
+            expect(Array.isArray(mut.addValues)).toBe(true);
+            expect(mut.addValues.length).toBeGreaterThan(0);
+            for (const v of mut.addValues) {
+              expect(v.trim()).not.toBe('');
+            }
+          }
+        }
+      })
+    );
+  });
+
   it('should never include priorities with empty keys', () => {
     fc.assert(
       fc.property(fcAllocationFormState(), form => {

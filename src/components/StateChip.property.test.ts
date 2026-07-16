@@ -15,7 +15,6 @@
  */
 
 import * as fc from 'fast-check';
-import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { StateChip } from './StateChip';
 
@@ -36,6 +35,8 @@ const VALID_CHIP_COLORS = new Set([
 
 /**
  * Known Agones GameServer lifecycle states and their expected chip colors.
+ * Used as the expected-value reference — the actual mapping lives inside
+ * the StateChip component's internal STATE_COLORS constant.
  *
  * @see {@link https://agones.dev/site/docs/reference/gameserver/#gameserver-state-diagram | Agones GameServer State Diagram}
  */
@@ -54,12 +55,14 @@ const KNOWN_STATE_COLORS: Record<string, string> = {
 };
 
 describe('StateChip — property tests', () => {
-  it('should never crash on any arbitrary string input', () => {
+  it('should never crash and always produce a valid element for any arbitrary string input', () => {
     fc.assert(
       fc.property(fc.string(), state => {
-        const element = React.createElement(StateChip, { state });
+        // Directly call the component function to execute its internal logic
+        // (STATE_COLORS lookup, Chip rendering) rather than just creating a descriptor.
+        const element = StateChip({ state });
         expect(element).toBeDefined();
-        expect(element.type).toBe(StateChip);
+        expect(element.props).toBeDefined();
       })
     );
   });
@@ -67,13 +70,10 @@ describe('StateChip — property tests', () => {
   it('should always resolve to a valid MUI Chip color for any input', () => {
     fc.assert(
       fc.property(fc.string(), state => {
-        // Replicate the exact lookup logic used by StateChip:
-        // STATE_COLORS[state] ?? 'default'
-        // Use Object.hasOwn to avoid prototype keys like __proto__
-        const resolved = Object.prototype.hasOwnProperty.call(KNOWN_STATE_COLORS, state)
-          ? KNOWN_STATE_COLORS[state]
-          : 'default';
-        expect(VALID_CHIP_COLORS.has(resolved)).toBe(true);
+        // Directly invoke the component to exercise the real STATE_COLORS mapping.
+        const element = StateChip({ state });
+        const color: string = element.props.color;
+        expect(VALID_CHIP_COLORS.has(color)).toBe(true);
       })
     );
   });
@@ -81,9 +81,11 @@ describe('StateChip — property tests', () => {
   it('should map every known Agones state to its documented color', () => {
     fc.assert(
       fc.property(fc.constantFrom(...Object.keys(KNOWN_STATE_COLORS)), state => {
-        const STATE_COLORS: Record<string, string> = KNOWN_STATE_COLORS;
-        const resolved = STATE_COLORS[state] ?? 'default';
-        expect(resolved).toBe(KNOWN_STATE_COLORS[state]);
+        // Invoke the real component and verify its output color matches
+        // the expected color from KNOWN_STATE_COLORS (the reference document).
+        const element = StateChip({ state });
+        const color: string = element.props.color;
+        expect(color).toBe(KNOWN_STATE_COLORS[state]);
       })
     );
   });
