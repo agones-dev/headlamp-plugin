@@ -62,7 +62,7 @@ export function ReplicaBar({ desired, ready, allocated, reserved = 0 }: ReplicaB
             borderRadius: 1,
             display: 'flex',
             overflow: 'hidden',
-            bgcolor: 'grey.200',
+            bgcolor: 'action.hover',
           }}
         >
           {parts.map((p, i) => (

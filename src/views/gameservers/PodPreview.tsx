@@ -15,11 +15,7 @@
  */
 
 import { K8s } from '@kinvolk/headlamp-plugin/lib';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { SimpleTable } from '@kinvolk/headlamp-plugin/lib/components/common';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import { FleetLink } from '../../components/FleetLink';
@@ -65,34 +61,31 @@ export function PodPreview({ gameServer }: { gameServer: GameServer }) {
       </PreviewPanel>
     );
 
+  const podData = pods.map(pod => {
+    const statuses = pod.jsonData?.status?.containerStatuses ?? [];
+    const ready = (statuses as ContainerStatus[]).filter(c => c.ready).length;
+    return {
+      name: pod.metadata.name,
+      status: pod.jsonData?.status?.phase ?? '—',
+      node: pod.jsonData?.spec?.nodeName ?? '—',
+      ip: pod.jsonData?.status?.podIP ?? '—',
+      containersReady: statuses.length > 0 ? `${ready}/${statuses.length}` : '—',
+    };
+  });
+
   return (
     <PreviewPanel title={title}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Pod Name</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Node</TableCell>
-            <TableCell>IP</TableCell>
-            <TableCell>Containers Ready</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {pods.map(pod => {
-            const statuses = pod.jsonData?.status?.containerStatuses ?? [];
-            const ready = (statuses as ContainerStatus[]).filter(c => c.ready).length;
-            return (
-              <TableRow key={pod.metadata.uid}>
-                <TableCell>{pod.metadata.name}</TableCell>
-                <TableCell>{pod.jsonData?.status?.phase ?? '—'}</TableCell>
-                <TableCell>{pod.jsonData?.spec?.nodeName ?? '—'}</TableCell>
-                <TableCell>{pod.jsonData?.status?.podIP ?? '—'}</TableCell>
-                <TableCell>{statuses.length > 0 ? `${ready}/${statuses.length}` : '—'}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+      <SimpleTable
+        columns={[
+          { label: 'Pod Name', datum: 'name' },
+          { label: 'Status', datum: 'status' },
+          { label: 'Node', datum: 'node' },
+          { label: 'IP', datum: 'ip' },
+          { label: 'Containers Ready', datum: 'containersReady' },
+        ]}
+        data={podData}
+        emptyMessage="No pod found."
+      />
     </PreviewPanel>
   );
 }
