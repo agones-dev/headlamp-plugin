@@ -28,7 +28,7 @@ import { FleetLink } from '../../components/FleetLink';
 import { GameServerStatusBanner } from '../../components/GameServerStatusBanner';
 import { StateChip } from '../../components/StateChip';
 import { UtilBar } from '../../components/UtilBar';
-import { GameServer } from '../../resources/gameserver';
+import { GameServer, MergedPort } from '../../resources/gameserver';
 
 /** Shows merged spec+status port info including portPolicy. */
 function PortsSection({ gameServer }: { gameServer: GameServer }) {
@@ -39,11 +39,11 @@ function PortsSection({ gameServer }: { gameServer: GameServer }) {
     <SectionBox title="Ports">
       <SimpleTable
         columns={[
-          { label: 'Name', getter: (p: any) => p.name },
-          { label: 'Host Port', getter: (p: any) => p.hostPort ?? '—' },
-          { label: 'Container Port', getter: (p: any) => p.containerPort ?? '—' },
-          { label: 'Protocol', getter: (p: any) => p.protocol },
-          { label: 'Policy', getter: (p: any) => p.portPolicy },
+          { label: 'Name', getter: (p: MergedPort) => p.name },
+          { label: 'Host Port', getter: (p: MergedPort) => p.hostPort ?? '—' },
+          { label: 'Container Port', getter: (p: MergedPort) => p.containerPort ?? '—' },
+          { label: 'Protocol', getter: (p: MergedPort) => p.protocol },
+          { label: 'Policy', getter: (p: MergedPort) => p.portPolicy },
         ]}
         data={merged}
       />
