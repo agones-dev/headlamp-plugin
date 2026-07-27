@@ -61,5 +61,8 @@ const STATE_COLORS: Record<string, ChipColor> = {
 };
 
 export function StateChip({ state }: { state: string }) {
-  return <Chip label={state || '—'} color={STATE_COLORS[state] ?? 'default'} size="small" />;
+  const color: ChipColor = Object.hasOwn(STATE_COLORS, state)
+    ? STATE_COLORS[state]
+    : 'default';
+  return <Chip label={state || '—'} color={color} size="small" />;
 }

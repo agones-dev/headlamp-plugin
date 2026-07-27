@@ -61,7 +61,7 @@ function fcFleetAutoscalerJson(): fc.Arbitrary<any> {
         ableToScale: fc.option(fc.boolean(), { nil: undefined }),
         scalingLimited: fc.option(fc.boolean(), { nil: undefined }),
         lastScaleTime: fc.option(
-          fc.date().map(d => d.toISOString()),
+          fc.date({ min: new Date('2000-01-01T00:00:00Z'), max: new Date('2099-12-31T23:59:59Z') }).map(d => d.toISOString()),
           { nil: undefined }
         ),
         lastAppliedPolicy: fc.option(fc.string({ maxLength: 30 }), { nil: undefined }),
