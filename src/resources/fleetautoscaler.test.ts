@@ -274,8 +274,6 @@ describe('FleetAutoscaler', () => {
             between: {
               start: '2026-06-20T00:00:00Z',
               end: '2026-06-21T00:00:00Z',
-              minReplicas: 2,
-              maxReplicas: 20,
             },
             policy: { type: 'Buffer', buffer: { bufferSize: 3, minReplicas: 2, maxReplicas: 20 } },
           },
@@ -311,7 +309,7 @@ describe('FleetAutoscaler', () => {
         fleetName: 'test-fleet',
         policy: {
           type: 'Wasm',
-          wasm: { url: 'https://example.com/autoscaler.wasm', requestsPerSecond: 10 },
+          wasm: { from: { url: { url: 'https://example.com/autoscaler.wasm' } } },
         },
       },
     });
