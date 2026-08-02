@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-import { Link, SectionBox } from '@kinvolk/headlamp-plugin/lib/components/common';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
+import { ResourceListView } from '@kinvolk/headlamp-plugin/lib/components/common';
 import React from 'react';
 import { AutoscalerStatusChip } from '../../components/AutoscalerStatusChip';
 import { FleetAutoscaler } from '../../resources/fleetautoscaler';
@@ -29,54 +23,43 @@ export function FleetAutoscalerList() {
   const [autoscalers] = FleetAutoscaler.useList();
 
   return (
-    <SectionBox title="Fleet Autoscalers">
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Namespace</TableCell>
-            <TableCell>Fleet</TableCell>
-            <TableCell>Policy</TableCell>
-            <TableCell>Current / Desired</TableCell>
-            <TableCell>Last Scale</TableCell>
-            <TableCell>Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {!autoscalers ? (
-            <TableRow>
-              <TableCell colSpan={7}>
-                <Typography variant="body2" color="text.secondary">
-                  Loading…
-                </Typography>
-              </TableCell>
-            </TableRow>
-          ) : (
-            autoscalers.map(a => (
-              <TableRow key={a.metadata.uid}>
-                <TableCell>
-                  <Link kubeObject={a}>{a.metadata.name}</Link>
-                </TableCell>
-                <TableCell>{a.metadata.namespace}</TableCell>
-                <TableCell>{a.fleetName}</TableCell>
-                <TableCell>{a.policyType}</TableCell>
-                <TableCell>
-                  {a.currentReplicas} / {a.desiredReplicas}
-                </TableCell>
-                <TableCell>
-                  {a.lastScaleTime ? new Date(a.lastScaleTime).toLocaleString() : '—'}
-                </TableCell>
-                <TableCell>
-                  <AutoscalerStatusChip
-                    ableToScale={a.ableToScale}
-                    scalingLimited={a.scalingLimited}
-                  />
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </SectionBox>
+    <ResourceListView
+      title="Fleet Autoscalers"
+      data={autoscalers}
+      columns={[
+        'name',
+        'namespace',
+        {
+          id: 'fleet',
+          label: 'Fleet',
+          getValue: (a: FleetAutoscaler) => a.fleetName,
+        },
+        {
+          id: 'policy',
+          label: 'Policy',
+          getValue: (a: FleetAutoscaler) => a.policyType,
+        },
+        {
+          id: 'replicas',
+          label: 'Current / Desired',
+          getValue: (a: FleetAutoscaler) => `${a.currentReplicas} / ${a.desiredReplicas}`,
+        },
+        {
+          id: 'lastScale',
+          label: 'Last Scale',
+          getValue: (a: FleetAutoscaler) =>
+            a.lastScaleTime ? new Date(a.lastScaleTime).toLocaleString() : '—',
+        },
+        {
+          id: 'status',
+          label: 'Status',
+          render: (a: FleetAutoscaler) => (
+            <AutoscalerStatusChip ableToScale={a.ableToScale} scalingLimited={a.scalingLimited} />
+          ),
+          getValue: (a: FleetAutoscaler) =>
+            !a.ableToScale ? 'Blocked' : a.scalingLimited ? 'Limited' : 'OK',
+        },
+      ]}
+    />
   );
 }
