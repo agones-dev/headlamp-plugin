@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { DetailsGrid, SectionBox } from '@kinvolk/headlamp-plugin/lib/components/common';
+import {
+  DetailsGrid,
+  NameValueTable,
+  SectionBox,
+} from '@kinvolk/headlamp-plugin/lib/components/common';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -189,23 +189,23 @@ function ExplainerSection({ item, fleet }: { item: FleetAutoscaler; fleet: Fleet
           <Typography variant="body2">{explanation}</Typography>
         </Box>
 
-        <Table size="small">
-          <TableBody>
-            <TableRow>
-              <TableCell sx={{ color: 'text.secondary', width: '35%' }}>Replica Status</TableCell>
-              <TableCell>
+        <NameValueTable
+          rows={[
+            {
+              name: 'Replica Status',
+              value: (
                 <ReplicaBar
                   desired={current}
                   ready={ready}
                   allocated={allocated}
                   reserved={reserved}
                 />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ color: 'text.secondary' }}>Current → Desired</TableCell>
-              <TableCell>
-                {current === desired ? (
+              ),
+            },
+            {
+              name: 'Current → Desired',
+              value:
+                current === desired ? (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="body2">{current}</Typography>
                     <Chip label="stable" color="success" size="small" />
@@ -217,37 +217,34 @@ function ExplainerSection({ item, fleet }: { item: FleetAutoscaler; fleet: Fleet
                     </Typography>
                     <Chip label="scaling" color="warning" size="small" />
                   </Box>
-                )}
-              </TableCell>
-            </TableRow>
-            {item.scalingLimited && (
-              <TableRow>
-                <TableCell sx={{ color: 'text.secondary' }}>Scaling Limit</TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Chip label="Hit min/max bounds" color="warning" size="small" />
-                    <Typography variant="body2" color="text.secondary">
-                      The autoscaler wants to scale further but is capped by configured limits.
-                    </Typography>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
-            {!item.ableToScale && (
-              <TableRow>
-                <TableCell sx={{ color: 'text.secondary' }}>Scaling Blocked</TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Chip label="Unable to scale" color="error" size="small" />
-                    <Typography variant="body2" color="text.secondary">
-                      Check fleet status and autoscaler events for the cause.
-                    </Typography>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                ),
+            },
+            {
+              name: 'Scaling Limit',
+              value: (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip label="Hit min/max bounds" color="warning" size="small" />
+                  <Typography variant="body2" color="text.secondary">
+                    The autoscaler wants to scale further but is capped by configured limits.
+                  </Typography>
+                </Box>
+              ),
+              hide: !item.scalingLimited,
+            },
+            {
+              name: 'Scaling Blocked',
+              value: (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip label="Unable to scale" color="error" size="small" />
+                  <Typography variant="body2" color="text.secondary">
+                    Check fleet status and autoscaler events for the cause.
+                  </Typography>
+                </Box>
+              ),
+              hide: item.ableToScale,
+            },
+          ]}
+        />
       </Box>
     </SectionBox>
   );
