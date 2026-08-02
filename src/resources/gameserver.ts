@@ -28,6 +28,17 @@ export interface GameServerStatusPort {
   port: number;
 }
 
+/**
+ * A port entry merging spec metadata (policy, containerPort) with status (host port).
+ */
+export interface MergedPort {
+  name: string;
+  hostPort: number | undefined;
+  containerPort: number | undefined;
+  protocol: string;
+  portPolicy: string;
+}
+
 export interface CounterStatus {
   count: number;
   capacity: number;
@@ -162,13 +173,7 @@ export class GameServer extends KubeObject<AgonesGameServer> {
   }
 
   /** Merged port info: spec metadata (policy, containerPort) + status (host port). */
-  get mergedPorts(): Array<{
-    name: string;
-    hostPort: number | undefined;
-    containerPort: number | undefined;
-    protocol: string;
-    portPolicy: string;
-  }> {
+  get mergedPorts(): MergedPort[] {
     const specPorts = this.spec.ports ?? [];
     const statusPorts = this.status.ports ?? [];
     if (specPorts.length === 0 && statusPorts.length === 0) return [];
