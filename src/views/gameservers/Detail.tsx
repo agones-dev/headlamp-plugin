@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { DetailsGrid, SectionBox } from '@kinvolk/headlamp-plugin/lib/components/common';
+import {
+  DetailsGrid,
+  NameValueTable,
+  SectionBox,
+  SimpleTable,
+} from '@kinvolk/headlamp-plugin/lib/components/common';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { FleetLink } from '../../components/FleetLink';
 import { GameServerStatusBanner } from '../../components/GameServerStatusBanner';
 import { StateChip } from '../../components/StateChip';
 import { UtilBar } from '../../components/UtilBar';
-import { GameServer } from '../../resources/gameserver';
+import { GameServer, MergedPort } from '../../resources/gameserver';
 
 /** Shows merged spec+status port info including portPolicy. */
 function PortsSection({ gameServer }: { gameServer: GameServer }) {
@@ -37,30 +37,28 @@ function PortsSection({ gameServer }: { gameServer: GameServer }) {
 
   return (
     <SectionBox title="Ports">
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Host Port</TableCell>
-            <TableCell>Container Port</TableCell>
-            <TableCell>Protocol</TableCell>
-            <TableCell>Policy</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {merged.map((p, i) => (
-            <TableRow key={i}>
-              <TableCell>{p.name}</TableCell>
-              <TableCell>{p.hostPort ?? '—'}</TableCell>
-              <TableCell>{p.containerPort ?? '—'}</TableCell>
-              <TableCell>{p.protocol}</TableCell>
-              <TableCell>{p.portPolicy}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <SimpleTable
+        columns={[
+          { label: 'Name', getter: (p: MergedPort) => p.name },
+          { label: 'Host Port', getter: (p: MergedPort) => p.hostPort ?? '—' },
+          { label: 'Container Port', getter: (p: MergedPort) => p.containerPort ?? '—' },
+          { label: 'Protocol', getter: (p: MergedPort) => p.protocol },
+          { label: 'Policy', getter: (p: MergedPort) => p.portPolicy },
+        ]}
+        data={merged}
+      />
     </SectionBox>
   );
+}
+
+/** Unified row shape for counters and lists in the SimpleTable. */
+interface CounterListRow {
+  type: 'Counter' | 'List';
+  key: string;
+  used: number;
+  capacity: number;
+  available: number;
+  values?: string[];
 }
 
 function CountersListsSection({ gameServer }: { gameServer: GameServer }) {
@@ -69,65 +67,66 @@ function CountersListsSection({ gameServer }: { gameServer: GameServer }) {
 
   if (counters.length === 0 && lists.length === 0) return null;
 
+  const rows: CounterListRow[] = [
+    ...counters.map(([key, c]) => ({
+      type: 'Counter' as const,
+      key,
+      used: c.count,
+      capacity: c.capacity,
+      available: c.capacity - c.count,
+    })),
+    ...lists.map(([key, l]) => {
+      const count = l.values?.length ?? 0;
+      return {
+        type: 'List' as const,
+        key,
+        used: count,
+        capacity: l.capacity,
+        available: l.capacity - count,
+        values: l.values,
+      };
+    }),
+  ];
+
   return (
     <SectionBox title="Counters &amp; Lists">
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Type</TableCell>
-            <TableCell>Key</TableCell>
-            <TableCell>Used / Capacity</TableCell>
-            <TableCell>Available</TableCell>
-            <TableCell sx={{ minWidth: 160 }}>Utilization</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {counters.map(([key, c]) => (
-            <TableRow key={`counter-${key}`}>
-              <TableCell>
-                <Chip label="Counter" size="small" variant="outlined" />
-              </TableCell>
-              <TableCell>
-                <strong>{key}</strong>
-              </TableCell>
-              <TableCell>
-                {c.count} / {c.capacity}
-              </TableCell>
-              <TableCell>{c.capacity - c.count}</TableCell>
-              <TableCell>
-                <UtilBar value={c.count} max={c.capacity} />
-              </TableCell>
-            </TableRow>
-          ))}
-          {lists.map(([key, l]) => {
-            const count = l.values?.length ?? 0;
-            return (
-              <TableRow key={`list-${key}`}>
-                <TableCell>
-                  <Chip label="List" size="small" variant="outlined" />
-                </TableCell>
-                <TableCell>
-                  <strong>{key}</strong>
-                </TableCell>
-                <TableCell>
-                  {count} / {l.capacity}
-                  {count > 0 && (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
-                      {l.values.map(v => (
-                        <Chip key={v} label={v} size="small" />
-                      ))}
-                    </Box>
-                  )}
-                </TableCell>
-                <TableCell>{l.capacity - count}</TableCell>
-                <TableCell>
-                  <UtilBar value={count} max={l.capacity} />
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+      <SimpleTable
+        columns={[
+          {
+            label: 'Type',
+            getter: (r: CounterListRow) => <Chip label={r.type} size="small" variant="outlined" />,
+          },
+          {
+            label: 'Key',
+            getter: (r: CounterListRow) => <strong>{r.key}</strong>,
+          },
+          {
+            label: 'Used / Capacity',
+            getter: (r: CounterListRow) => (
+              <>
+                {r.used} / {r.capacity}
+                {r.type === 'List' && r.values && r.values.length > 0 && (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
+                    {r.values.map(v => (
+                      <Chip key={v} label={v} size="small" />
+                    ))}
+                  </Box>
+                )}
+              </>
+            ),
+          },
+          {
+            label: 'Available',
+            getter: (r: CounterListRow) => r.available,
+          },
+          {
+            label: 'Utilization',
+            getter: (r: CounterListRow) => <UtilBar value={r.used} max={r.capacity} />,
+            cellProps: { sx: { minWidth: 160 } },
+          },
+        ]}
+        data={rows}
+      />
     </SectionBox>
   );
 }
@@ -139,49 +138,40 @@ function ConfigurationSection({ gameServer }: { gameServer: GameServer }) {
 
   if (!health && !sdk) return null;
 
-  const rows: Array<{ label: string; value: React.ReactNode }> = [];
+  const rows: Array<{ name: string; value: React.ReactNode; hide?: boolean }> = [];
 
   if (health) {
     rows.push(
-      { label: 'Health Checking', value: health.disabled ? 'Disabled' : 'Enabled' },
+      { name: 'Health Checking', value: health.disabled ? 'Disabled' : 'Enabled' },
       {
-        label: 'Initial Delay',
+        name: 'Initial Delay',
         value:
           health.initialDelaySeconds !== null && health.initialDelaySeconds !== undefined
             ? `${health.initialDelaySeconds}s`
             : '—',
       },
       {
-        label: 'Period',
+        name: 'Period',
         value:
           health.periodSeconds !== null && health.periodSeconds !== undefined
             ? `${health.periodSeconds}s`
             : '—',
       },
-      { label: 'Failure Threshold', value: health.failureThreshold ?? '—' }
+      { name: 'Failure Threshold', value: health.failureThreshold ?? '—' }
     );
   }
 
   if (sdk) {
     rows.push(
-      { label: 'SDK Log Level', value: sdk.logLevel ?? '—' },
-      { label: 'SDK gRPC Port', value: sdk.grpcPort ?? '—' },
-      { label: 'SDK HTTP Port', value: sdk.httpPort ?? '—' }
+      { name: 'SDK Log Level', value: sdk.logLevel ?? '—' },
+      { name: 'SDK gRPC Port', value: sdk.grpcPort ?? '—' },
+      { name: 'SDK HTTP Port', value: sdk.httpPort ?? '—' }
     );
   }
 
   return (
     <SectionBox title="Configuration">
-      <Table size="small">
-        <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.label}>
-              <TableCell sx={{ color: 'text.secondary', width: '40%' }}>{row.label}</TableCell>
-              <TableCell>{row.value}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <NameValueTable rows={rows} />
     </SectionBox>
   );
 }

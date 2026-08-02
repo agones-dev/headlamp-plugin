@@ -26,7 +26,7 @@ interface UtilBarProps {
 
 export function UtilBar({ value, max, showLabel = 'fraction' }: UtilBarProps) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
-  const color = pct >= 90 ? '#f44336' : pct >= 70 ? '#ff9800' : '#4caf50';
+  const color = pct >= 90 ? 'error.main' : pct >= 70 ? 'warning.main' : 'success.main';
   const label =
     showLabel === 'fraction'
       ? `${value} / ${max}`

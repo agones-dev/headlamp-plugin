@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import { Link } from '@kinvolk/headlamp-plugin/lib/components/common';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { Link, SimpleTable } from '@kinvolk/headlamp-plugin/lib/components/common';
 import React from 'react';
 import { GameServer } from '../resources/gameserver';
 import { StateChip } from './StateChip';
@@ -30,31 +25,31 @@ interface GameServerTableProps {
 
 export function GameServerTable({ gameServers }: GameServerTableProps) {
   return (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell>Name</TableCell>
-          <TableCell>State</TableCell>
-          <TableCell>Address</TableCell>
-          <TableCell>Ports</TableCell>
-          <TableCell>Node</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {gameServers.map(gs => (
-          <TableRow key={gs.metadata.uid}>
-            <TableCell>
-              <Link kubeObject={gs}>{gs.metadata.name}</Link>
-            </TableCell>
-            <TableCell>
-              <StateChip state={gs.state} />
-            </TableCell>
-            <TableCell>{gs.address || '—'}</TableCell>
-            <TableCell>{gs.ports || '—'}</TableCell>
-            <TableCell>{gs.nodeName || '—'}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <SimpleTable
+      columns={[
+        {
+          label: 'Name',
+          getter: (gs: GameServer) => <Link kubeObject={gs}>{gs.metadata.name}</Link>,
+        },
+        {
+          label: 'State',
+          getter: (gs: GameServer) => <StateChip state={gs.state} />,
+        },
+        {
+          label: 'Address',
+          getter: (gs: GameServer) => gs.address || '—',
+        },
+        {
+          label: 'Ports',
+          getter: (gs: GameServer) => gs.ports || '—',
+        },
+        {
+          label: 'Node',
+          getter: (gs: GameServer) => gs.nodeName || '—',
+        },
+      ]}
+      data={gameServers}
+      emptyMessage="No game servers found."
+    />
   );
 }

@@ -14,77 +14,48 @@
  * limitations under the License.
  */
 
-import { Link, SectionBox } from '@kinvolk/headlamp-plugin/lib/components/common';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import React, { useState } from 'react';
+import { ResourceListView } from '@kinvolk/headlamp-plugin/lib/components/common';
+import React from 'react';
 import { ReplicaBar } from '../../components/ReplicaBar';
 import { ReplicasControl } from '../../components/ReplicasControl';
-import { ROW_SX, SELECTED_SX } from '../../components/tableStyles';
 import { Fleet } from '../../resources/fleet';
-import { GameServersPreview } from './GameServersPreview';
 
 export function FleetList() {
   const [fleets] = Fleet.useList();
-  const [selected, setSelected] = useState<Fleet | null>(null);
-
-  const toggle = (fleet: Fleet) =>
-    setSelected(prev => (prev?.metadata.uid === fleet.metadata.uid ? null : fleet));
 
   return (
-    <SectionBox title="Fleets">
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Namespace</TableCell>
-            <TableCell>Scheduling</TableCell>
-            <TableCell>Desired</TableCell>
-            <TableCell>Replica Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {!fleets ? (
-            <TableRow>
-              <TableCell colSpan={5}>
-                <Typography variant="body2" color="text.secondary">
-                  Loading…
-                </Typography>
-              </TableCell>
-            </TableRow>
-          ) : (
-            fleets.map(fleet => (
-              <TableRow
-                key={fleet.metadata.uid}
-                sx={selected?.metadata.uid === fleet.metadata.uid ? SELECTED_SX : ROW_SX}
-                onClick={() => toggle(fleet)}
-              >
-                <TableCell>
-                  <Link kubeObject={fleet}>{fleet.metadata.name}</Link>
-                </TableCell>
-                <TableCell>{fleet.metadata.namespace}</TableCell>
-                <TableCell>{fleet.scheduling}</TableCell>
-                <TableCell onClick={e => e.stopPropagation()}>
-                  <ReplicasControl fleet={fleet} />
-                </TableCell>
-                <TableCell>
-                  <ReplicaBar
-                    desired={fleet.desiredReplicas}
-                    ready={fleet.readyReplicas}
-                    allocated={fleet.allocatedReplicas}
-                    reserved={fleet.reservedReplicas}
-                  />
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-      {selected && <GameServersPreview fleet={selected} />}
-    </SectionBox>
+    <ResourceListView
+      title="Fleets"
+      data={fleets}
+      columns={[
+        'name',
+        'namespace',
+        {
+          id: 'scheduling',
+          label: 'Scheduling',
+          getValue: (fleet: Fleet) => fleet.scheduling,
+        },
+        {
+          id: 'desired',
+          label: 'Desired',
+          render: (fleet: Fleet) => <ReplicasControl fleet={fleet} />,
+          getValue: (fleet: Fleet) => fleet.desiredReplicas,
+        },
+        {
+          id: 'replicaStatus',
+          label: 'Replica Status',
+          render: (fleet: Fleet) => (
+            <ReplicaBar
+              desired={fleet.desiredReplicas}
+              ready={fleet.readyReplicas}
+              allocated={fleet.allocatedReplicas}
+              reserved={fleet.reservedReplicas}
+            />
+          ),
+          getValue: (fleet: Fleet) =>
+            `${fleet.readyReplicas}/${fleet.allocatedReplicas}/${fleet.desiredReplicas}`,
+        },
+      ]}
+    />
   );
 }
