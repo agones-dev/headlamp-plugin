@@ -50,18 +50,33 @@ export interface AgonesFleetAutoscaler extends KubeObjectInterface {
       /**
        * WebAssembly-based autoscaling policy.
        *
-       * @see {@link https://agones.dev/site/docs/advanced/scheduling-and-autoscaling/#custom-autoscaler-with-wasm | Wasm Autoscaler}
+       * @see {@link https://agones.dev/site/docs/reference/fleetautoscaler/#wasm-autoscaling | Wasm Autoscaler}
        */
       wasm?: {
-        url: string;
-        requestsPerSecond?: number;
+        /** Exported function to call in the wasm module, defaults to 'scale'. */
+        function?: string;
+        /** Config values to pass to the wasm program on startup. */
+        config?: Record<string, string>;
+        /** Source of the Wasm module. */
+        from: {
+          url?: {
+            url?: string;
+            service?: {
+              name: string;
+              namespace: string;
+              path?: string;
+              port?: number;
+            };
+            caBundle?: string;
+          };
+        };
+        /** Hex-encoded SHA-256 hash for integrity verification. */
+        hash?: string;
       };
       schedule?: {
         between?: {
           start: string;
           end: string;
-          minReplicas: number;
-          maxReplicas: number;
         };
         activePeriod?: {
           timezone: string;
