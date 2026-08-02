@@ -14,86 +14,51 @@
  * limitations under the License.
  */
 
-import { Link, SectionBox } from '@kinvolk/headlamp-plugin/lib/components/common';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import React, { useState } from 'react';
+import { ResourceListView } from '@kinvolk/headlamp-plugin/lib/components/common';
+import React from 'react';
 import { FleetLink } from '../../components/FleetLink';
 import { StateChip } from '../../components/StateChip';
-import { ROW_SX, SELECTED_SX } from '../../components/tableStyles';
 import { GameServer } from '../../resources/gameserver';
-import { PodPreview } from './PodPreview';
 
 export function GameServerList() {
   const [gameServers] = GameServer.useList();
-  const [selected, setSelected] = useState<GameServer | null>(null);
-
-  const toggle = (gs: GameServer) =>
-    setSelected(prev => (prev?.metadata.uid === gs.metadata.uid ? null : gs));
 
   return (
-    <SectionBox title="Game Servers">
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Namespace</TableCell>
-            <TableCell>Fleet</TableCell>
-            <TableCell>State</TableCell>
-            <TableCell>Address</TableCell>
-            <TableCell>Ports</TableCell>
-            <TableCell>Node</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {!gameServers ? (
-            <TableRow>
-              <TableCell colSpan={7}>
-                <Typography variant="body2" color="text.secondary">
-                  Loading…
-                </Typography>
-              </TableCell>
-            </TableRow>
-          ) : (
-            gameServers.map(gs => {
-              return (
-                <TableRow
-                  key={gs.metadata.uid}
-                  sx={selected?.metadata.uid === gs.metadata.uid ? SELECTED_SX : ROW_SX}
-                  onClick={() => toggle(gs)}
-                >
-                  <TableCell>
-                    <Link kubeObject={gs}>{gs.metadata.name}</Link>
-                  </TableCell>
-                  <TableCell>{gs.metadata.namespace}</TableCell>
-                  <TableCell>
-                    {gs.fleet ? (
-                      <FleetLink
-                        namespace={gs.metadata.namespace}
-                        name={gs.fleet}
-                        onClick={e => e.stopPropagation()}
-                      />
-                    ) : (
-                      '—'
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <StateChip state={gs.state} />
-                  </TableCell>
-                  <TableCell>{gs.address || '—'}</TableCell>
-                  <TableCell>{gs.ports || '—'}</TableCell>
-                  <TableCell>{gs.nodeName || '—'}</TableCell>
-                </TableRow>
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
-      {selected && <PodPreview gameServer={selected} />}
-    </SectionBox>
+    <ResourceListView
+      title="Game Servers"
+      data={gameServers}
+      columns={[
+        'name',
+        'namespace',
+        {
+          id: 'fleet',
+          label: 'Fleet',
+          render: (gs: GameServer) =>
+            gs.fleet ? <FleetLink namespace={gs.metadata.namespace} name={gs.fleet} /> : '—',
+          getValue: (gs: GameServer) => gs.fleet || '',
+        },
+        {
+          id: 'state',
+          label: 'State',
+          render: (gs: GameServer) => <StateChip state={gs.state} />,
+          getValue: (gs: GameServer) => gs.state,
+        },
+        {
+          id: 'address',
+          label: 'Address',
+          getValue: (gs: GameServer) => gs.address || '—',
+        },
+        {
+          id: 'ports',
+          label: 'Ports',
+          getValue: (gs: GameServer) => gs.ports || '—',
+        },
+        {
+          id: 'node',
+          label: 'Node',
+          getValue: (gs: GameServer) => gs.nodeName || '—',
+        },
+      ]}
+    />
   );
 }
