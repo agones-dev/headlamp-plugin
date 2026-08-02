@@ -46,7 +46,14 @@ function fcGameServerAllocationJson(): fc.Arbitrary<any> {
         ports: fc.option(
           fc.array(
             fc.record({
-              name: fc.string({ minLength: 1, maxLength: 15 }),
+              // Kubernetes port names are DNS-label constrained (lowercase
+              // alphanumerics and '-'), so the ', ' join delimiter used by the
+              // ports getter can never appear inside a real name.
+              name: fc.string({
+                unit: fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789-'),
+                minLength: 1,
+                maxLength: 15,
+              }),
               port: fc.integer({ min: 1, max: 65535 }),
             }),
             { maxLength: 4 }
