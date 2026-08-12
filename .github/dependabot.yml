@@ -41,3 +41,7 @@ updates:
       prefix: "ci"
     labels:
       - dependencies
+    groups:
+      github-actions:
+        patterns:
+          - '*'
