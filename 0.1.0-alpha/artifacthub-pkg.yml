@@ -1,0 +1,24 @@
+version: 0.1.0-alpha
+name: "headlamp_agones"
+displayName: Agones
+createdAt: "2026-08-02T19:00:00Z"
+logoURL: "https://raw.githubusercontent.com/agones-dev/agones/main/docs/agones.png"
+description: A Headlamp plugin for visualising and managing Agones game servers, fleets, and autoscalers in Kubernetes.
+changes:
+  - kind: added
+    description: "Add Overview dashboard summarising Agones resources across the cluster."
+  - kind: added
+    description: "Add Fleet, GameServer, and FleetAutoscaler list and detail views with colour-coded lifecycle state chips."
+  - kind: added
+    description: "Add GameServerAllocation dialog to allocate game servers directly from the UI."
+  - kind: added
+    description: "Add Map view showing relationships between Fleets, GameServers, and Pods."
+  - kind: added
+    description: "Add CRD detection guard that shows an install banner on clusters without Agones."
+  - kind: added
+    description: "Add Allocated-state warning banner on the GameServer detail view to protect active game sessions."
+annotations:
+  headlamp/plugin/archive-url: "https://github.com/agones-dev/headlamp-plugin/releases/download/v0.1.0-alpha/agones-plugin-0.1.0-alpha.tar.gz"
+  headlamp/plugin/archive-checksum: "SHA256:3c80a6f500a2e9f479cdcbd24defed114257a01de562b3c37a6aa50ab56d4c12"
+  headlamp/plugin/version-compat: ">=0.22"
+  headlamp/plugin/distro-compat: in-cluster,web,docker-desktop,desktop
