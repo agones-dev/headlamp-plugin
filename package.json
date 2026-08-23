@@ -1,7 +1,7 @@
 {
   "name": "agones-plugin",
-  "version": "0.1.0",
-  "description": "Your Headlamp plugin",
+  "version": "0.1.0-alpha",
+  "description": "A Headlamp plugin for visualising and managing Agones game servers, fleets, and autoscalers in Kubernetes",
   "scripts": {
     "start": "headlamp-plugin start",
     "build": "headlamp-plugin build",
